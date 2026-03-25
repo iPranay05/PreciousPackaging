@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { createClient } from "@/lib/supabase";
+import { supabasePublic } from "@/lib/supabase";
 import { Package, Clock, Truck, CheckCircle } from "lucide-react";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
@@ -19,6 +19,7 @@ interface Order {
   status: OrderStatus;
   created_at: string;
   notes: string | null;
+  payment_status: string | null;
 }
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; icon: React.ReactNode }> = {
@@ -29,15 +30,14 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; icon: R
 };
 
 export default function OrdersPage() {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading, supabase } = useAuth();
   const router = useRouter();
-  const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) router.push("/auth/login");
-  }, [user, loading, router]);
+    if (!authLoading && !user) router.push("/auth/login");
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     if (!user) return;
@@ -45,10 +45,10 @@ export default function OrdersPage() {
       .from("orders")
       .select("*")
       .order("created_at", { ascending: false })
-      .then(({ data }) => { setOrders(data ?? []); setFetching(false); });
+      .then(({ data }: { data: any }) => { setOrders(data ?? []); setFetching(false); });
   }, [user, supabase]);
 
-  if (loading || !user) return null;
+  if (authLoading || !user) return null;
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] pt-24 pb-16 px-4">
@@ -83,12 +83,18 @@ export default function OrdersPage() {
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs font-semibold ${s.color}`}>
                         {s.icon} {s.label}
                       </span>
+                      {order.payment_status === "paid" && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-green-100 bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest">
+                          <CheckCircle size={10} /> Paid
+                        </span>
+                      )}
                     </div>
                     <div className="text-sm text-gray-500 mt-1 space-x-3">
                       {order.size && <span>Size: {order.size}</span>}
                       {order.color && <span>Color: {order.color}</span>}
                       <span>Qty: {order.quantity}</span>
                     </div>
+                    {order.notes && <p className="text-xs text-gray-500 mt-1 italic">Note: {order.notes}</p>}
                     <p className="text-xs text-gray-400 mt-1">{new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
                   </div>
                   {order.total_price && (

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { createClient } from "@/lib/supabase";
+import { supabasePublic } from "@/lib/supabase";
 
 // ─── DATA ──────────────────────────────────────────────────────────────────────
 
@@ -19,40 +19,6 @@ type Product = {
   image: string;
   badge?: string;
 };
-
-const ALL_PRODUCTS: Product[] = [
-  // TOP & BOTTOM SET
-  { id: "tb-1", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "2×2×2", description: "Ring", price: 23, image: "/images/category_rigid.png" },
-  { id: "tb-2", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "2.5×3×1.5", description: "Earring", price: 25, image: "/images/category_rigid.png" },
-  { id: "tb-3", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "3×3×1.5", description: "Pendant / Multipurpose", price: 30, image: "/images/category_rigid.png" },
-  { id: "tb-4", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "3.5×3.5×1.5", description: "Multipurpose", price: 35, image: "/images/category_rigid.png" },
-  { id: "tb-5", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "4×4×1.5", description: "Bangle / Multipurpose", price: 43, image: "/images/category_rigid.png" },
-  { id: "tb-6", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "5×4×1.5", description: "Multipurpose", price: 43, image: "/images/category_rigid.png" },
-  { id: "tb-7", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "7×2×1.5", description: "Chain / Bracelet", price: 43, image: "/images/category_rigid.png" },
-  { id: "tb-8", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "9×2×1.5", description: "Chain", price: 45, image: "/images/category_rigid.png" },
-  { id: "tb-9", category: "Top & Bottom Set", categorySlug: "top-bottom", size: "7×8×1.5", description: "Medium Necklace", price: 75, image: "/images/category_rigid.png", badge: "Popular" },
-  // MAGNET BOX
-  { id: "mb-1", category: "Magnet Box", categorySlug: "magnet", size: "2×2×2", description: "Ring", price: 25, image: "/images/product1.png" },
-  { id: "mb-2", category: "Magnet Box", categorySlug: "magnet", size: "2.5×3×1.5", description: "Earring", price: 30, image: "/images/product1.png" },
-  { id: "mb-3", category: "Magnet Box", categorySlug: "magnet", size: "3×3×1.5", description: "Pendant / Multipurpose", price: 35, image: "/images/product1.png" },
-  { id: "mb-4", category: "Magnet Box", categorySlug: "magnet", size: "3.5×3.5×1.5", description: "Multipurpose", price: 40, image: "/images/product1.png" },
-  { id: "mb-5", category: "Magnet Box", categorySlug: "magnet", size: "4×4×1.5", description: "Bangle / Multipurpose", price: 50, image: "/images/product1.png" },
-  { id: "mb-6", category: "Magnet Box", categorySlug: "magnet", size: "5×4×1.5", description: "Multipurpose", price: 55, image: "/images/product1.png" },
-  { id: "mb-7", category: "Magnet Box", categorySlug: "magnet", size: "6×7×1.5", description: "Small Necklace", price: 75, image: "/images/product1.png" },
-  { id: "mb-8", category: "Magnet Box", categorySlug: "magnet", size: "7×8×1.5", description: "Medium Necklace", price: 85, image: "/images/product1.png", badge: "Popular" },
-  { id: "mb-9", category: "Magnet Box", categorySlug: "magnet", size: "10×3×1.5", description: "Big Chain", price: 75, image: "/images/product1.png" },
-  { id: "mb-10", category: "Magnet Box", categorySlug: "magnet", size: "11×8×2", description: "Full Set", price: 160, image: "/images/product1.png", badge: "Premium" },
-  // DRAWER BOX
-  { id: "db-1", category: "Drawer Box", categorySlug: "drawer", size: "2×2×2", description: "Ring", price: 30, image: "/images/category_mailer.png" },
-  { id: "db-2", category: "Drawer Box", categorySlug: "drawer", size: "2.5×3×1.5", description: "Earring", price: 38, image: "/images/category_mailer.png" },
-  { id: "db-3", category: "Drawer Box", categorySlug: "drawer", size: "3×3×1.5", description: "Pendant / Multipurpose", price: 40, image: "/images/category_mailer.png" },
-  { id: "db-4", category: "Drawer Box", categorySlug: "drawer", size: "3.5×3.5×1.5", description: "Multipurpose", price: 45, image: "/images/category_mailer.png" },
-  { id: "db-5", category: "Drawer Box", categorySlug: "drawer", size: "3.75×3.75×1.5", description: "Multipurpose", price: 48, image: "/images/category_mailer.png" },
-  { id: "db-6", category: "Drawer Box", categorySlug: "drawer", size: "4×4×2", description: "Bangle / Multipurpose", price: 55, image: "/images/category_mailer.png" },
-  { id: "db-7", category: "Drawer Box", categorySlug: "drawer", size: "6×4", description: "Multipurpose / Bangle", price: 65, image: "/images/category_mailer.png" },
-  { id: "db-8", category: "Drawer Box", categorySlug: "drawer", size: "9×2×1.5", description: "Chain", price: 50, image: "/images/category_mailer.png" },
-  { id: "db-9", category: "Drawer Box", categorySlug: "drawer", size: "7×8×1.5", description: "Necklace", price: 110, image: "/images/category_mailer.png", badge: "Popular" },
-];
 
 const CATEGORIES = [
   { slug: "all", label: "All" },
@@ -86,94 +52,94 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
   }
 
   return (
-    <div className="bg-[#F5F3EE] rounded-3xl p-3 group hover:shadow-xl transition-all duration-500 hover:-translate-y-1 flex flex-col gap-3">
+    <div className="bg-white rounded-2xl overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100 flex flex-col">
 
-      {/* ── Top badge row ── */}
-      <div className="flex items-center gap-2">
-        <span className="bg-[#2C2C2C] text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-wider">
-          {CATEGORY_LABEL[product.categorySlug]}
-        </span>
-        {product.badge ? (
-          <span className="bg-white text-[#2C2C2C] text-[10px] font-bold px-3 py-1.5 rounded-full border border-gray-200 tracking-wider">
-            {product.badge}
+      {/* ── Image area ── */}
+      <Link href={`/products/${product.id}`} className="block relative">
+        <div className={`relative aspect-square w-full ${CATEGORY_BG[product.categorySlug]} overflow-hidden`}>
+          <Image
+            src={product.image}
+            alt={product.description}
+            fill
+            className="object-contain p-8 transition-transform duration-700 group-hover:scale-108 drop-shadow-xl"
+          />
+
+          {/* Wishlist button — top right */}
+          <button
+            onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }}
+            className="absolute top-3 right-3 w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110 z-10"
+          >
+            <svg
+              className={`w-4 h-4 transition-colors ${wishlisted ? "text-red-500 fill-red-500" : "text-gray-400"}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
+
+          {/* Badge — top left */}
+          {product.badge && (
+            <span className="absolute top-3 left-3 bg-[#1a1a1a] text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider z-10">
+              {product.badge}
+            </span>
+          )}
+        </div>
+      </Link>
+
+      {/* ── Info area ── */}
+      <div className="flex flex-col gap-3 p-4 flex-1">
+
+        {/* Category + Size */}
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+            {CATEGORY_LABEL[product.categorySlug]}
           </span>
-        ) : (
-          <span className="bg-white text-gray-400 text-[10px] font-medium px-3 py-1.5 rounded-full border border-gray-200">
+          <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
             {product.size} cm
           </span>
-        )}
-      </div>
+        </div>
 
-      {/* ── Image container (clickable → detail page) ── */}
-      <Link href={`/products/${product.id}`} className="block">
-        <div className={`relative rounded-2xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} flex flex-col`}>
-          {/* Product image */}
-          <div className="relative aspect-[4/3.5] w-full">
-            <Image
-              src={product.image}
-              alt={product.description}
-              fill
-              className="object-contain p-6 transition-transform duration-700 group-hover:scale-105 drop-shadow-lg"
-            />
+        {/* Name */}
+        <Link href={`/products/${product.id}`}>
+          <h3 className="text-base font-bold text-[#1a1a1a] leading-snug group-hover:text-[#0A2540] transition-colors">
+            {product.description}
+          </h3>
+        </Link>
+
+        {/* Price + Add to cart */}
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+          <div>
+            <p className="text-[10px] text-gray-400 leading-none mb-0.5">per piece</p>
+            <p className="text-lg font-black text-[#1a1a1a]">₹{product.price}</p>
           </div>
 
-          {/* ── Action bar at bottom of image ── */}
-          <div className="flex items-center gap-2 px-3 pb-3">
-            {/* Size chip */}
-            <div className="flex-1 bg-white/80 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-[9px] text-gray-400 font-medium leading-none mb-0.5 uppercase tracking-wider">Size</p>
-              <p className="text-xs font-black text-[#0A2540] leading-none">{product.size}</p>
-            </div>
-
-            {/* Wishlist */}
-            <button
-              onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }}
-              className="w-10 h-10 bg-white/80 backdrop-blur rounded-xl flex items-center justify-center transition-all hover:scale-110 flex-shrink-0"
-            >
-              <svg
-                className={`w-4 h-4 transition-colors ${wishlisted ? "text-red-500 fill-red-500" : "text-gray-400"}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
-
-            {/* Add to cart */}
-            <button
-              onClick={(e) => { e.preventDefault(); handleAdd(); }}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 ${added ? "bg-green-500" : "bg-white/80 backdrop-blur"
-                }`}
-            >
-              {added ? (
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <button
+            onClick={handleAdd}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+              added
+                ? "bg-green-500 text-white"
+                : "bg-[#1a1a1a] text-white hover:bg-[#333]"
+            }`}
+          >
+            {added ? (
+              <>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-              ) : (
-                <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                Added
+              </>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-              )}
-            </button>
-          </div>
+                Add
+              </>
+            )}
+          </button>
         </div>
-      </Link>
 
-      {/* ── Name + Price (also clickable) ── */}
-      <Link href={`/products/${product.id}`} className="block px-1 pb-1">
-        <div className="flex justify-between items-start gap-2">
-          <div>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
-              {product.category}
-            </p>
-            <h3 className="font-black text-[#0A2540] text-xl font-semibold leading-tight">{product.description}</h3>
-          </div>
-          <div className="text-right flex-shrink-0">
-            <p className="text-[10px] font-medium text-gray-400 mb-0.5">per piece</p>
-            <p className="text-xl font-black text-[#0A2540] leading-none">₹{product.price}</p>
-          </div>
-        </div>
-      </Link>
-
+      </div>
     </div>
   );
 }
@@ -183,12 +149,29 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
 
 export default function ProductsPage() {
   const router = useRouter();
-  const { user } = useAuth();
-  const supabase = createClient();
+  const { user, loading: authLoading, supabase } = useAuth();
   const [activeCategory, setActiveCategory] = useState("all");
   const [cart, setCart] = useState<{ product: Product; qty: number }[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteState, setQuoteState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [orderNotes, setOrderNotes] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { data, error } = await supabasePublic.from("products").select("*").order("id", { ascending: true });
+        if (error) throw error;
+        if (data) setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   const handleAdd = (product: Product) => {
     setCart((prev) => {
@@ -204,29 +187,10 @@ export default function ProductsPage() {
   const totalPrice = cart.reduce((s, i) => s + i.product.price * i.qty, 0);
 
   const handleRequestQuote = async () => {
-    if (!user) { router.push("/auth/login"); return; }
-    setQuoteState("loading");
-    const rows = cart.map(({ product, qty }) => ({
-      user_id: user.id,
-      product_id: product.id,
-      product_name: `${product.description} (${product.category})`,
-      size: product.size,
-      quantity: qty * 300, // qty in cart × MOQ
-      total_price: product.price * qty * 300,
-      color: null,
-    }));
-    const { error } = await supabase.from("orders").insert(rows);
-    if (error) {
-      setQuoteState("error");
-      setTimeout(() => setQuoteState("idle"), 3000);
-    } else {
-      setQuoteState("success");
-      setCart([]);
-      setTimeout(() => { setQuoteState("idle"); setCartOpen(false); }, 2500);
-    }
+    alert("Bulk checkout is currently disabled for security upgrades. Please checkout items individually from their product pages.");
   };
 
-  const filtered = ALL_PRODUCTS.filter((p) =>
+  const filtered = products.filter((p) =>
     activeCategory === "all" || p.categorySlug === activeCategory
   );
 
@@ -294,25 +258,31 @@ export default function ProductsPage() {
 
       {/* ─── Products ─── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-        {Object.keys(grouped).length === 0 && (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-8 h-8 border-4 border-[#0A2540]/20 border-t-[#0A2540] rounded-full animate-spin" />
+            <p className="text-[#0A2540] font-bold tracking-widest text-sm uppercase">Loading Catalog…</p>
+          </div>
+        ) : Object.keys(grouped).length === 0 ? (
           <p className="text-center text-gray-400 py-20">No products found.</p>
-        )}
-        {Object.entries(grouped).map(([catName, products]) => (
-          <section key={catName}>
-            {/* Section heading */}
-            <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-black text-[#0A2540] tracking-tight">{catName}</h2>
-              <div className="h-0.5 w-12 bg-[#0A2540] mt-2 rounded-full" />
-            </div>
+        ) : (
+          Object.entries(grouped).map(([catName, cats]) => (
+            <section key={catName}>
+              {/* Section heading */}
+              <div className="mb-8">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#0A2540] tracking-tight">{catName}</h2>
+                <div className="h-0.5 w-12 bg-[#0A2540] mt-2 rounded-full" />
+              </div>
 
-            {/* Product grid — 2 cols mobile, 3 on sm, 4 on lg */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} onAdd={handleAdd} />
-              ))}
-            </div>
-          </section>
-        ))}
+              {/* Product grid — 2 cols mobile, 3 on sm, 4 on lg */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                {cats.map((p) => (
+                  <ProductCard key={p.id} product={p} onAdd={handleAdd} />
+                ))}
+              </div>
+            </section>
+          ))
+        )}
 
         {/* Order info */}
         <div className="border border-gray-200 rounded-2xl p-6 sm:p-8 bg-white">
@@ -391,6 +361,20 @@ export default function ProductsPage() {
                   </div>
                 )}
 
+                {cart.length > 0 && (
+                  <div className="mb-4">
+                    <label className="block text-[#0A2540] text-xs font-bold uppercase tracking-widest mb-2">
+                      Order Notes (Optional)
+                    </label>
+                    <textarea
+                      value={orderNotes}
+                      onChange={(e) => setOrderNotes(e.target.value)}
+                      placeholder="E.g., Custom logo details, preferred colors, specific delivery instructions..."
+                      className="w-full bg-gray-50 border border-gray-200 text-[#0A2540] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#0A2540] transition-colors resize-none h-20 placeholder:text-gray-400"
+                    />
+                  </div>
+                )}
+
                 <button
                   onClick={handleRequestQuote}
                   disabled={quoteState === "loading" || quoteState === "success"}
@@ -401,7 +385,7 @@ export default function ProductsPage() {
                   ) : quoteState === "success" ? (
                     "✓ Order Placed!"
                   ) : (
-                    user ? "Request Quote" : "Login to Order"
+                    user ? "Place Order" : "Login to Order"
                   )}
                 </button>
               </div>

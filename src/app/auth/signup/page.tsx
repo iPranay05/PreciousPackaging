@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 
-export default function SignupPage() {
+export default function Signup() {
   const router = useRouter();
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, mobile },
       },
     });
 
@@ -68,6 +69,20 @@ export default function SignupPage() {
               onChange={(e) => setFullName(e.target.value)}
               className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
               placeholder="Jane Doe"
+            />
+          </div>
+
+          <div>
+            <label className="block text-white/70 text-xs font-bold uppercase tracking-widest mb-2">
+              Mobile Number
+            </label>
+            <input
+              type="tel"
+              required
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
+              placeholder="+91 98765 43210"
             />
           </div>
 

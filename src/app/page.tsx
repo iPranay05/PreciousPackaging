@@ -7,7 +7,7 @@ import AboutUs from "@/components/AboutUs";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import PromoBanner from "@/components/PromoBanner";
-import Newsletter from "@/components/Newsletter";
+// import Newsletter from "@/components/Newsletter";
 import InstagramFeed from "@/components/InstagramFeed";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
@@ -24,7 +24,7 @@ export default function Home() {
       <HowItWorks />
       <Testimonials />
       {/* <PromoBanner /> */}
-      <Newsletter />
+      {/* <Newsletter /> */}
       <InstagramFeed />
       <FAQ />
       <Footer />

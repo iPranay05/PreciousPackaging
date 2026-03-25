@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { createClient } from "@/lib/supabase";
+import { supabasePublic } from "@/lib/supabase";
 
 // ─── Shared product data (mirrors products/page.tsx) ────────────────────────
 
@@ -19,40 +19,6 @@ type Product = {
   image: string;
   badge?: string;
 };
-
-const ALL_PRODUCTS: Product[] = [
-  // TOP & BOTTOM SET
-  { id: "tb-1",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "2×2×2",         description: "Ring",                    price: 23,  image: "/images/category_rigid.png" },
-  { id: "tb-2",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "2.5×3×1.5",     description: "Earring",                 price: 25,  image: "/images/category_rigid.png" },
-  { id: "tb-3",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "3×3×1.5",       description: "Pendant / Multipurpose",  price: 30,  image: "/images/category_rigid.png" },
-  { id: "tb-4",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "3.5×3.5×1.5",   description: "Multipurpose",            price: 35,  image: "/images/category_rigid.png" },
-  { id: "tb-5",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "4×4×1.5",       description: "Bangle / Multipurpose",   price: 43,  image: "/images/category_rigid.png" },
-  { id: "tb-6",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "5×4×1.5",       description: "Multipurpose",            price: 43,  image: "/images/category_rigid.png" },
-  { id: "tb-7",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "7×2×1.5",       description: "Chain / Bracelet",        price: 43,  image: "/images/category_rigid.png" },
-  { id: "tb-8",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "9×2×1.5",       description: "Chain",                   price: 45,  image: "/images/category_rigid.png" },
-  { id: "tb-9",  category: "Top & Bottom Set", categorySlug: "top-bottom", size: "7×8×1.5",       description: "Medium Necklace",         price: 75,  image: "/images/category_rigid.png", badge: "Popular" },
-  // MAGNET BOX
-  { id: "mb-1",  category: "Magnet Box", categorySlug: "magnet", size: "2×2×2",         description: "Ring",                    price: 25,  image: "/images/product1.png" },
-  { id: "mb-2",  category: "Magnet Box", categorySlug: "magnet", size: "2.5×3×1.5",     description: "Earring",                 price: 30,  image: "/images/product1.png" },
-  { id: "mb-3",  category: "Magnet Box", categorySlug: "magnet", size: "3×3×1.5",       description: "Pendant / Multipurpose",  price: 35,  image: "/images/product1.png" },
-  { id: "mb-4",  category: "Magnet Box", categorySlug: "magnet", size: "3.5×3.5×1.5",   description: "Multipurpose",            price: 40,  image: "/images/product1.png" },
-  { id: "mb-5",  category: "Magnet Box", categorySlug: "magnet", size: "4×4×1.5",       description: "Bangle / Multipurpose",   price: 50,  image: "/images/product1.png" },
-  { id: "mb-6",  category: "Magnet Box", categorySlug: "magnet", size: "5×4×1.5",       description: "Multipurpose",            price: 55,  image: "/images/product1.png" },
-  { id: "mb-7",  category: "Magnet Box", categorySlug: "magnet", size: "6×7×1.5",       description: "Small Necklace",          price: 75,  image: "/images/product1.png" },
-  { id: "mb-8",  category: "Magnet Box", categorySlug: "magnet", size: "7×8×1.5",       description: "Medium Necklace",         price: 85,  image: "/images/product1.png", badge: "Popular" },
-  { id: "mb-9",  category: "Magnet Box", categorySlug: "magnet", size: "10×3×1.5",      description: "Big Chain",               price: 75,  image: "/images/product1.png" },
-  { id: "mb-10", category: "Magnet Box", categorySlug: "magnet", size: "11×8×2",        description: "Full Set",                price: 160, image: "/images/product1.png", badge: "Premium" },
-  // DRAWER BOX
-  { id: "db-1",  category: "Drawer Box", categorySlug: "drawer", size: "2×2×2",         description: "Ring",                    price: 30,  image: "/images/category_mailer.png" },
-  { id: "db-2",  category: "Drawer Box", categorySlug: "drawer", size: "2.5×3×1.5",     description: "Earring",                 price: 38,  image: "/images/category_mailer.png" },
-  { id: "db-3",  category: "Drawer Box", categorySlug: "drawer", size: "3×3×1.5",       description: "Pendant / Multipurpose",  price: 40,  image: "/images/category_mailer.png" },
-  { id: "db-4",  category: "Drawer Box", categorySlug: "drawer", size: "3.5×3.5×1.5",   description: "Multipurpose",            price: 45,  image: "/images/category_mailer.png" },
-  { id: "db-5",  category: "Drawer Box", categorySlug: "drawer", size: "3.75×3.75×1.5", description: "Multipurpose",            price: 48,  image: "/images/category_mailer.png" },
-  { id: "db-6",  category: "Drawer Box", categorySlug: "drawer", size: "4×4×2",         description: "Bangle / Multipurpose",   price: 55,  image: "/images/category_mailer.png" },
-  { id: "db-7",  category: "Drawer Box", categorySlug: "drawer", size: "6×4",           description: "Multipurpose / Bangle",   price: 65,  image: "/images/category_mailer.png" },
-  { id: "db-8",  category: "Drawer Box", categorySlug: "drawer", size: "9×2×1.5",       description: "Chain",                   price: 50,  image: "/images/category_mailer.png" },
-  { id: "db-9",  category: "Drawer Box", categorySlug: "drawer", size: "7×8×1.5",       description: "Necklace",                price: 110, image: "/images/category_mailer.png", badge: "Popular" },
-];
 
 // ─── Preset colours ──────────────────────────────────────────────────────────
 
@@ -78,28 +44,95 @@ const CATEGORY_BG: Record<string, string> = {
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
-  const supabase = createClient();
+  const { user, profile, loading: authLoading, supabase } = useAuth();
   const id = params?.id as string;
 
-  const product = ALL_PRODUCTS.find((p) => p.id === id);
+  const [product, setProduct]             = useState<Product | null>(null);
+  const [related, setRelated]             = useState<Product[]>([]);
+  const [loading, setLoading]             = useState(true);
 
   const [selectedColor, setSelectedColor] = useState<string>(PRESET_COLORS[0].hex);
   const [customHex, setCustomHex]         = useState<string>("");
   const [isCustom, setIsCustom]           = useState(false);
-  const [qty, setQty]                     = useState(300);
+  const [qty, setQty]                     = useState(1);
   const [orderState, setOrderState]       = useState<"idle" | "loading" | "success" | "error">("idle");
   const [orderError, setOrderError]       = useState("");
+  const [orderNotes, setOrderNotes]       = useState("");
 
-  // Related products (same category, excluding current)
-  const related = product
-    ? ALL_PRODUCTS.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id).slice(0, 4)
-    : [];
+  useEffect(() => {
+    async function fetchProductData() {
+      if (!id) return;
+      setLoading(true);
+      
+      try {
+        const { data: prodData, error } = await supabasePublic.from("products").select("*").eq("id", id).single();
+        if (error) throw error;
+        
+        if (prodData) {
+          setProduct(prodData);
+          
+          // Fetch related products
+          const { data: relData } = await supabasePublic
+            .from("products")
+            .select("*")
+            .eq("categorySlug", prodData.categorySlug)
+            .neq("id", id)
+            .limit(4);
+            
+          if (relData) {
+            setRelated(relData);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching product details:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProductData();
+  }, [id]);
 
   const activeColor = isCustom ? (customHex.startsWith("#") ? customHex : `#${customHex}`) : selectedColor;
   const activeColorLabel = isCustom
     ? `Custom (${activeColor})`
     : PRESET_COLORS.find((c) => c.hex === selectedColor)?.label ?? selectedColor;
+  const totalPrice = product ? product.price * qty : 0;
+
+  // Checkout Details State
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutData, setCheckoutData] = useState({
+    name: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+  const [checkoutStep, setCheckoutStep] = useState<"shipping" | "payment">("shipping");
+  const [selectedUpiApp, setSelectedUpiApp] = useState<string>("");
+
+  // Sync profile name and initial data when loaded
+  useEffect(() => {
+    if (profile) {
+      setCheckoutData(prev => ({
+        ...prev,
+        name: profile.full_name || prev.name
+      }));
+    }
+  }, [profile]);
+
+  // Load Razorpay Script
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   function handleCustomHexChange(val: string) {
     const cleaned = val.replace(/[^0-9a-fA-F#]/g, "").slice(0, 7);
@@ -107,28 +140,114 @@ export default function ProductDetailPage() {
     setIsCustom(true);
   }
 
-  async function handlePlaceOrder() {
+  const handleRazorpayPayment = async () => {
     if (!user) { router.push("/auth/login"); return; }
     if (!product) return;
+    
+    // Check if we have checkout data
+    if (!checkoutData.address || !checkoutData.city || !checkoutData.pincode) {
+      setShowCheckout(true);
+      return;
+    }
+
     setOrderState("loading");
     setOrderError("");
-    const { error } = await supabase.from("orders").insert({
-      user_id: user.id,
-      product_id: product.id,
-      product_name: `${product.description} (${product.category})`,
-      size: product.size,
-      color: activeColor,
-      quantity: qty,
-      total_price: product.price * qty,
-    });
-    if (error) {
+
+    try {
+      const response = await fetch('/api/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          product_id: product.id,
+          quantity: qty,
+          color: selectedColor,
+          size: product.size,
+          notes: orderNotes,
+          checkoutData,
+          user_id: user.id,
+          user_email: user.email
+        }),
+      });
+
+      const orderData = await response.json();
+
+      if (orderData.error) {
+        throw new Error(orderData.details || orderData.error);
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Precious Packaging",
+        description: `Order for ${product.description}`,
+        image: product.image,
+        order_id: orderData.id,
+        handler: async function (response: any) {
+          try {
+            // Verify signature on backend first
+            const verifyRes = await fetch('/api/verify-razorpay-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                supabase_order_id: orderData.supabase_order_id,
+              }),
+            });
+            
+            const verifyData = await verifyRes.json();
+            
+            if (verifyData.verified) {
+              console.log("Order placed successfully!");
+              setOrderState("success");
+              // Wait 3 seconds to show success message and optionally redirect
+              setTimeout(() => {
+                setShowCheckout(false);
+                setCheckoutStep("shipping");
+                setOrderState("idle");
+              }, 3000);
+            } else {
+              throw new Error(verifyData.error || "Payment verification failed.");
+            }
+          } catch (verifyError: any) {
+            setOrderError(verifyError.message || "Failed to verify your payment. Please contact support.");
+            setOrderState("error");
+          }
+        },
+        prefill: {
+          name: checkoutData.name,
+          email: user?.email || "",
+        },
+        theme: {
+          color: "#0A2540",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        setOrderError(response.error.description);
+        setOrderState("error");
+      });
+      rzp.open();
+    } catch (err: any) {
+      setOrderError(err.message || "Failed to initiate payment");
       setOrderState("error");
-      setOrderError(error.message);
-      setTimeout(() => setOrderState("idle"), 4000);
-    } else {
-      setOrderState("success");
-      setTimeout(() => setOrderState("idle"), 4000);
+    } finally {
+      if (orderState !== "success") {
+        setOrderState("idle");
+      }
     }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f9f9f9] gap-4">
+        <div className="w-8 h-8 border-4 border-[#0A2540]/20 border-t-[#0A2540] rounded-full animate-spin" />
+        <p className="text-[#0A2540] font-bold tracking-widest text-sm uppercase">Loading Product…</p>
+      </div>
+    );
   }
 
   if (!product) {
@@ -142,7 +261,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  const totalPrice = product.price * qty;
 
   return (
     <div className="min-h-screen bg-[#f9f9f9] font-sans">
@@ -246,7 +364,7 @@ export default function ProductDetailPage() {
               <p className="text-[#0A2540]/80 text-sm leading-relaxed">
                 Premium {product.category.toLowerCase()} crafted for jewellery packaging. Includes full-colour screen printing of your logo or branding. 
                 Perfect for <strong>{product.description}</strong> — available in {product.size} cm dimensions. 
-                FSC-certified materials, eco-friendly production. Lead time: 15 working days. MOQ: 300 pcs.
+                FSC-certified materials, eco-friendly production. Lead time: 15 working days.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {["FSC Certified", "Screen Print Included", "Premium Finish", "Eco Friendly"].map((tag) => (
@@ -325,24 +443,24 @@ export default function ProductDetailPage() {
 
             {/* ── Quantity selector ── */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Quantity <span className="text-[#0A2540]/40 normal-case font-medium">(min. 300 pcs)</span></h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Quantity</h2>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setQty((q) => Math.max(300, q - 100))}
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
                   className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center text-xl font-black text-[#0A2540] hover:border-[#0A2540] transition-colors"
                 >
                   −
                 </button>
                 <input
                   type="number"
-                  min={300}
-                  step={100}
+                  min={1}
+                  step={1}
                   value={qty}
-                  onChange={(e) => setQty(Math.max(300, Number(e.target.value)))}
+                  onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
                   className="w-28 text-center border-2 border-gray-200 rounded-xl h-11 font-black text-[#0A2540] text-base focus:border-[#0A2540] outline-none transition-colors"
                 />
                 <button
-                  onClick={() => setQty((q) => q + 100)}
+                  onClick={() => setQty((q) => q + 1)}
                   className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center text-xl font-black text-[#0A2540] hover:border-[#0A2540] transition-colors"
                 >
                   +
@@ -351,6 +469,17 @@ export default function ProductDetailPage() {
                   = <span className="text-[#0A2540] font-black">₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
               </div>
+            </div>
+
+            {/* ── Order Notes ── */}
+            <div>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Order Notes <span className="text-[#0A2540]/40 normal-case font-medium">(Optional)</span></h2>
+              <textarea
+                value={orderNotes}
+                onChange={(e) => setOrderNotes(e.target.value)}
+                placeholder="E.g., Custom logo details, preferred colors, specific delivery instructions..."
+                className="w-full bg-white border-2 border-gray-200 text-[#0A2540] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#0A2540] transition-colors resize-none h-24 placeholder:text-gray-400"
+              />
             </div>
 
             {/* ── CTA buttons ── */}
@@ -367,7 +496,7 @@ export default function ProductDetailPage() {
             )}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={handlePlaceOrder}
+                onClick={() => setShowCheckout(true)}
                 disabled={orderState === "loading" || orderState === "success"}
                 className={`flex-1 py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
                   orderState === "success"
@@ -382,9 +511,6 @@ export default function ProductDetailPage() {
                 ) : (
                   <><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg> {user ? "Place Order" : "Login to Order"}</>
                 )}
-              </button>
-              <button className="flex-1 sm:flex-none py-4 px-6 rounded-2xl border-2 border-[#0A2540] text-[#0A2540] font-black text-sm uppercase tracking-widest hover:bg-[#0A2540] hover:text-white transition-all duration-200">
-                Request Quote
               </button>
             </div>
 
@@ -432,6 +558,170 @@ export default function ProductDetailPage() {
       <footer className="bg-[#0A2540] text-white/30 py-5 text-center text-xs mt-16">
         © {new Date().getFullYear()} PreciousPackaging. All rights reserved.
       </footer>
+
+      {/* ── Checkout Modal ── */}
+      {showCheckout && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-[#0A2540]/60 backdrop-blur-sm"
+            onClick={() => setShowCheckout(false)}
+          />
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-black text-[#0A2540] tracking-tight">Shipping Details</h2>
+                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Final Step</p>
+                </div>
+                <button 
+                  onClick={() => setShowCheckout(false)}
+                  className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+
+              {checkoutStep === "shipping" ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Recipient Name</label>
+                      <input 
+                        type="text"
+                        placeholder="Full Name"
+                        value={checkoutData.name}
+                        onChange={(e) => setCheckoutData({...checkoutData, name: e.target.value})}
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Full Address</label>
+                      <textarea 
+                        placeholder="Street, Building, Landmark..."
+                        value={checkoutData.address}
+                        onChange={(e) => setCheckoutData({...checkoutData, address: e.target.value})}
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all h-24 resize-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">City</label>
+                        <input 
+                          type="text"
+                          placeholder="E.g. Mumbai"
+                          value={checkoutData.city}
+                          onChange={(e) => setCheckoutData({...checkoutData, city: e.target.value})}
+                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Pincode</label>
+                        <input 
+                          type="text"
+                          placeholder="6 Digits"
+                          maxLength={6}
+                          value={checkoutData.pincode}
+                          onChange={(e) => setCheckoutData({...checkoutData, pincode: e.target.value})}
+                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">State</label>
+                      <input 
+                        type="text"
+                        placeholder="E.g. Maharashtra"
+                        value={checkoutData.state}
+                        onChange={(e) => setCheckoutData({...checkoutData, state: e.target.value})}
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    <button 
+                      onClick={() => setCheckoutStep("payment")}
+                      disabled={!checkoutData.name || !checkoutData.address || !checkoutData.city || !checkoutData.pincode}
+                      className="w-full py-4 bg-[#0A2540] text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#163a5f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl shadow-[#0A2540]/20"
+                    >
+                      Continue to Payment
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <p className="text-center text-[#0A2540]/30 text-[10px] font-bold uppercase tracking-widest mt-4">Step 1 of 2: Shipping</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Payable Amount</span>
+                      <span className="text-xl font-black text-[#0A2540]">₹{(totalPrice * 1.12).toLocaleString("en-IN")}</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-medium">Includes 12% GST</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 ml-1">Secure Payment via Razorpay</label>
+                    <div className="bg-white border-2 border-[#0A2540]/10 rounded-2xl p-6 text-center">
+                      <div className="mb-4 flex justify-center gap-4 opacity-50">
+                        {/* Placeholder for UPI icons/Logos if you want to show them decorative */}
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">UPI</div>
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">CARD</div>
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">NET</div>
+                      </div>
+                      <p className="text-xs font-bold text-[#0A2540]/60 mb-6">Support for UPI, Debit/Credit Cards & Netbanking</p>
+                      
+                      <button
+                        onClick={handleRazorpayPayment}
+                        disabled={orderState === "loading"}
+                        className="w-full py-4 bg-[#0A2540] text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#163a5f] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#0A2540]/20"
+                      >
+                        {orderState === "loading" ? (
+                          <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V10h16v8zm0-10H4V6h16v2z"/></svg>
+                        )}
+                        Open Payment Portal
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    {orderError && (
+                      <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold animate-in fade-in slide-in-from-top-2">
+                        Error: {orderError}
+                      </div>
+                    )}
+                    
+                    {orderState === "success" ? (
+                      <div className="text-center py-4 animate-in zoom-in duration-300">
+                        <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <h3 className="text-lg font-black text-[#0A2540]">Success!</h3>
+                        <p className="text-xs text-gray-500 mt-1">Ordering placing...</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        <button 
+                          onClick={() => setCheckoutStep("shipping")}
+                          className="w-full py-2 text-gray-400 font-bold uppercase tracking-widest text-[10px] hover:text-[#0A2540] transition-colors"
+                        >
+                          Back to Shipping
+                        </button>
+                      </div>
+                    )}
+                    <p className="text-center text-[#0A2540]/30 text-[10px] font-bold uppercase tracking-widest mt-4">Safe & Secure Payments</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
