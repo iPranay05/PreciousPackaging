@@ -36,17 +36,17 @@ export default function Footer() {
               <li><Link href="#" className="hover:text-white transition-colors">Our Story</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Sustainability</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
             </ul>
           </div>
 
           <div className="col-span-2 sm:col-span-1">
             <h4 className="font-bold uppercase tracking-widest text-[#4169E1] mb-4 text-xs">Support</h4>
             <ul className="space-y-2.5 text-gray-300 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Shipping &amp; Returns</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link href="/legal/shipping" className="hover:text-white transition-colors">Shipping Policy</Link></li>
+              <li><Link href="/legal/refunds" className="hover:text-white transition-colors">Refund &amp; Cancellation</Link></li>
+              <li><Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/legal/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>
