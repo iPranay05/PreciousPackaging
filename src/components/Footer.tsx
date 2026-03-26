@@ -7,7 +7,12 @@ export default function Footer() {
 
         {/* Top: Brand block */}
         <div className="mb-10 md:mb-16">
-          <h3 className="text-2xl font-black tracking-tighter text-white mb-2">PreciousPackaging</h3>
+          <Link href="/" className="flex items-center gap-3 mb-4 group inline-flex">
+            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-14 w-auto object-contain invert mix-blend-screen contrast-125" />
+            <span className="font-serif font-medium tracking-wide text-2xl text-white group-hover:opacity-80 transition-opacity">
+              Precious<span className="text-white/80">Packaging</span>
+            </span>
+          </Link>
           <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-6">
             Sustainable, premium packaging solutions that elevate your brand and protect our planet.
           </p>

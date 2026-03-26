@@ -42,10 +42,13 @@ export default function Signup() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="text-white font-black text-2xl tracking-tight">
-            Precious<span className="text-white/60">Packaging</span>
+          <Link href="/" className="flex items-center justify-center gap-3 group mb-2">
+            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-14 sm:h-16 w-auto object-contain invert mix-blend-screen contrast-125" />
+            <span className="font-serif font-medium tracking-wide text-2xl sm:text-3xl text-white group-hover:opacity-80 transition-opacity">
+              Precious<span className="text-white/80">Packaging</span>
+            </span>
           </Link>
-          <p className="text-white/50 mt-2 text-sm">Create your account</p>
+          <p className="text-white/50 text-sm">Create your account</p>
         </div>
 
         <form

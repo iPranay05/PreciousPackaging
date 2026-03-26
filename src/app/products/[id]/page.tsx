@@ -266,18 +266,23 @@ export default function ProductDetailPage() {
     <div className="min-h-screen bg-[#f9f9f9] font-sans">
 
       {/* ── Sticky header ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A2540]/95 backdrop-blur-sm border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDFCF8]/95 backdrop-blur-sm border-b border-[#e5e0d8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
-          <button onClick={() => router.back()} className="text-white/60 hover:text-white text-sm font-medium transition-colors flex items-center gap-1.5">
+          <button onClick={() => router.back()} className="text-[#1a1a1a]/60 hover:text-[#1a1a1a] text-sm font-medium transition-colors flex items-center gap-1.5">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </button>
           <div className="flex-1" />
-          <Link href="/" className="font-extrabold text-white tracking-tighter text-lg">PreciousPackaging</Link>
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply" />
+            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-[#1a1a1a] group-hover:opacity-80 transition-opacity">
+              Precious<span className="text-[#1a1a1a]/70">Packaging</span>
+            </span>
+          </Link>
           <div className="flex-1" />
-          <Link href="/products" className="hidden sm:block text-white/50 hover:text-white text-xs font-medium transition-colors">
+          <Link href="/products" className="hidden sm:block text-[#1a1a1a]/50 hover:text-[#1a1a1a] text-xs font-medium transition-colors">
             All Products
           </Link>
         </div>

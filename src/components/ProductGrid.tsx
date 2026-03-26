@@ -4,12 +4,12 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const products = [
-  { id: 1, name: "Eco Mailer", price: "$2.99", src: "/images/category_mailer.png" },
-  { id: 2, name: "Kraft Pouch", price: "$1.49", src: "/images/category_pouch.png" },
-  { id: 3, name: "Luxury Rigid", price: "$5.99", src: "/images/category_rigid.png" },
-  { id: 4, name: "Custom Box", price: "$4.99", src: "/images/product1.png" },
-  { id: 5, name: "Bio Mailer", price: "$3.49", src: "/images/category_mailer.png" },
-  { id: 6, name: "Clear Pouch", price: "$1.99", src: "/images/category_pouch.png" },
+  { id: 1, name: "Eco Mailer", price: "₹2.99", src: "/images/category_mailer.png" },
+  { id: 2, name: "Kraft Pouch", price: "₹1.49", src: "/images/category_pouch.png" },
+  { id: 3, name: "Luxury Rigid", price: "₹5.99", src: "/images/category_rigid.png" },
+  { id: 4, name: "Custom Box", price: "₹4.99", src: "/images/product1.png" },
+  { id: 5, name: "Bio Mailer", price: "₹3.49", src: "/images/category_mailer.png" },
+  { id: 6, name: "Clear Pouch", price: "₹1.99", src: "/images/category_pouch.png" },
 ];
 
 export default function ProductGrid() {

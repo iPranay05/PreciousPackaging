@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { supabasePublic } from "@/lib/supabase";
-import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight } from "lucide-react";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
@@ -43,11 +43,11 @@ interface AdminOrder {
   transaction_id: string | null;
 }
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:    { label: "Pending",    color: "bg-yellow-100 text-yellow-800 border-yellow-200",   icon: <Clock size={12} /> },
-  processing: { label: "Processing", color: "bg-blue-100 text-blue-800 border-blue-200",         icon: <Package size={12} /> },
-  shipped:    { label: "Shipped",    color: "bg-purple-100 text-purple-800 border-purple-200",   icon: <Truck size={12} /> },
-  delivered:  { label: "Delivered",  color: "bg-green-100 text-green-800 border-green-200",      icon: <CheckCircle size={12} /> },
+const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
+  pending:    { label: "Pending",    color: "text-[#8b7355]", bg: "bg-[#f5f0eb] border-[#e1d5c9]", icon: <Clock size={12} /> },
+  processing: { label: "Processing", color: "text-slate-600", bg: "bg-slate-100 border-slate-200", icon: <Package size={12} /> },
+  shipped:    { label: "Shipped",    color: "text-slate-700", bg: "bg-slate-200 border-slate-300", icon: <Truck size={12} /> },
+  delivered:  { label: "Delivered",  color: "text-[#3a352f]", bg: "bg-[#e1d5c9]/30 border-[#e1d5c9]", icon: <CheckCircle size={12} /> },
 };
 
 const ALL_STATUSES: OrderStatus[] = ["pending", "processing", "shipped", "delivered"];
@@ -82,7 +82,6 @@ export default function AdminDashboard() {
 
   const fetchOrders = useCallback(async () => {
     setFetching(true);
-    console.log("Admin: Fetching orders...");
     try {
       const { data, error } = await supabase
         .from("orders")
@@ -90,7 +89,6 @@ export default function AdminDashboard() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       setOrders((data as AdminOrder[]) ?? []);
-      console.log("Admin: Orders fetched successfully:", data?.length ?? 0);
     } catch (err) {
       console.error("Admin: Error fetching orders:", err);
     } finally {
@@ -100,7 +98,6 @@ export default function AdminDashboard() {
 
   const fetchProducts = useCallback(async () => {
     setFetching(true);
-    console.log("Admin: Fetching products...");
     try {
       const { data, error } = await supabase
         .from("products")
@@ -108,7 +105,6 @@ export default function AdminDashboard() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       setProducts((data as Product[]) ?? []);
-      console.log("Admin: Products fetched successfully:", data?.length ?? 0);
     } catch (err) {
       console.error("Admin: Error fetching products:", err);
     } finally {
@@ -162,35 +158,20 @@ export default function AdminDashboard() {
     setUpdating(null);
   };
 
-  // 1. Still loading auth/profile — show spinner
   if (authLoading || (user && !profile)) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-[#0A2540] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#FDFCF8] flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 border-4 border-[#8b7355] border-t-transparent rounded-full animate-spin shadow-lg" />
         <div className="text-center">
-          <p className="text-[#0A2540] font-bold text-sm">Loading Dashboard...</p>
-          <p className="text-gray-400 text-[10px] mt-1 italic uppercase tracking-widest">Checking Authorization</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="mt-6 text-[10px] text-gray-400 underline hover:text-[#0A2540] transition-colors uppercase tracking-widest font-black"
-          >
-            Taking too long? Force Reload
-          </button>
+          <p className="text-[#1a1a1a] font-serif font-medium text-lg">Authenticating Admin</p>
+          <p className="text-[#8b7355] text-[10px] mt-1 italic uppercase tracking-widest">Secure Connection</p>
         </div>
       </div>
     );
   }
 
-  // 2. Not logged in → go to login
-  if (!user) {
-    router.push("/auth/login");
-    return null;
-  }
-
-  // 3. Logged in but not admin → go home
-  if (!profile?.is_admin) {
-    router.push("/");
-    return null;
+  if (!user || !profile?.is_admin) {
+    return null; // Handled by useEffect redirect
   }
 
   const stats = {
@@ -215,181 +196,261 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pt-24 pb-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">← Back to Site</Link>
-            <h1 className="text-3xl font-black text-[#0A2540] mt-2 tracking-tighter">Admin Dashboard</h1>
-            <p className="text-gray-500 text-sm">Manage orders and product catalog</p>
+    <div className="min-h-screen bg-[#FDFCF8] font-sans pb-24 text-[#1a1a1a]">
+      
+      {/* ── Premium Sticky Header ── */}
+      <header className="sticky top-0 z-40 bg-[#FDFCF8]/90 backdrop-blur-xl border-b border-[#e1d5c9]/60 shadow-sm">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link 
+              href="/" 
+              className="w-10 h-10 bg-[#f5f0eb] hover:bg-[#3a352f] hover:text-[#FDFCF8] rounded-full flex items-center justify-center text-[#8b7355] transition-all border border-[#e1d5c9]"
+              title="Return to Website"
+            >
+              <ChevronLeft size={20} />
+            </Link>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-serif font-medium text-[#1a1a1a] tracking-wide flex items-center gap-2 uppercase">
+                Command Center <LayoutDashboard size={20} className="text-[#8b7355] hidden sm:block" />
+              </h1>
+              <p className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.2em] text-[#8b7355] mt-0.5">Precious Packaging Admin</p>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          
+          <div className="flex items-center gap-3 sm:gap-4">
             <button 
               onClick={() => activeTab === "orders" ? fetchOrders() : fetchProducts()}
               disabled={fetching}
-              className="p-2.5 bg-white border-2 border-transparent hover:border-gray-200 rounded-xl text-gray-400 hover:text-[#0A2540] transition-all shadow-sm group"
+              className="w-10 h-10 bg-[#FDFCF8] border border-[#e1d5c9] hover:border-[#8b7355] rounded-full flex items-center justify-center text-[#8b7355] hover:bg-[#f5f0eb] transition-all shadow-sm group"
               title="Refresh Data"
             >
-              <RefreshCw size={18} className={`${fetching ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"}`} />
+              <RefreshCw size={18} className={`${fetching ? "animate-spin text-[#8b7355]" : "group-hover:rotate-180 transition-transform duration-500"}`} />
             </button>
-            <div className="relative group">
-              <input 
-                type="text" 
-                placeholder={`Search ${activeTab}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-white border-2 border-transparent focus:border-[#0A2540] rounded-xl px-10 py-2.5 text-sm w-full md:w-64 outline-none transition-all shadow-sm group-hover:shadow-md"
-              />
-              <Tag size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0A2540] transition-colors" />
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <Plus size={16} className="rotate-45" />
-                </button>
-              )}
+            <div className="w-10 h-10 rounded-full bg-[#1a1a1a] text-[#FDFCF8] flex items-center justify-center font-serif font-medium border border-[#8b7355]/40 shadow-md">
+              {profile.full_name?.charAt(0).toUpperCase() || "A"}
             </div>
-            {activeTab === "products" && (
-              <button 
-                onClick={() => setShowAddProduct(true)}
-                className="bg-[#0A2540] text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#163a5f] transition-all shadow-lg shadow-[#0A2540]/10 uppercase tracking-widest"
-              >
-                <Plus size={14} /> Add Product
-              </button>
-            )}
           </div>
         </div>
+      </header>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl mb-8 w-fit">
-          <button 
-            onClick={() => setActiveTab("orders")}
-            className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === "orders" ? "bg-white text-[#0A2540] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-          >
-            Orders
-          </button>
-          <button 
-            onClick={() => setActiveTab("products")}
-            className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === "products" ? "bg-white text-[#0A2540] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-          >
-            Products
-          </button>
-        </div>
-
-        {/* Stats */}
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        {/* ── Status Metrics (Only for Orders) ── */}
         {activeTab === "orders" && (
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
-            {[
-              { label: "Total", value: stats.total, color: "bg-white border-gray-100" },
-              { label: "Pending", value: stats.pending, color: "bg-yellow-50 border-yellow-200" },
-              { label: "Processing", value: stats.processing, color: "bg-blue-50 border-blue-200" },
-              { label: "Shipped", value: stats.shipped, color: "bg-purple-50 border-purple-200" },
-              { label: "Delivered", value: stats.delivered, color: "bg-green-50 border-green-200" },
-            ].map((stat) => (
-              <div key={stat.label} className={`${stat.color} border rounded-xl p-4 text-center`}>
-                <p className="text-2xl font-black text-[#0A2540]">{stat.value}</p>
-                <p className="text-xs text-gray-500 font-semibold mt-0.5">{stat.label}</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
+            {/* Total */}
+            <div className="col-span-2 md:col-span-1 bg-[#1a1a1a] rounded-xl p-6 text-[#FDFCF8] shadow-lg relative border border-[#8b7355]/30">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <p className="text-[#e1d5c9] text-[10px] font-sans uppercase tracking-widest">Total Orders</p>
+                <div className="flex items-end justify-between">
+                  <h3 className="text-4xl sm:text-5xl font-serif">{stats.total}</h3>
+                  <ShoppingBag size={20} className="text-[#8b7355]" />
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* Pending */}
+            <div className="bg-[#f5f0eb] rounded-xl p-6 text-[#1a1a1a] shadow-sm relative border border-[#e1d5c9]">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <p className="text-[#8b7355] text-[10px] font-sans uppercase tracking-widest">Pending</p>
+                <div className="flex items-end justify-between">
+                  <h3 className="text-3xl sm:text-4xl font-serif">{stats.pending}</h3>
+                  <Clock size={20} className="text-[#8b7355]/60" />
+                </div>
+              </div>
+            </div>
+
+            {/* Processing */}
+            <div className="bg-[#f5f0eb] rounded-xl p-6 text-[#1a1a1a] shadow-sm relative border border-[#e1d5c9]">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <p className="text-[#8b7355] text-[10px] font-sans uppercase tracking-widest">Processing</p>
+                <div className="flex items-end justify-between">
+                  <h3 className="text-3xl sm:text-4xl font-serif">{stats.processing}</h3>
+                  <Package size={20} className="text-[#8b7355]/60" />
+                </div>
+              </div>
+            </div>
+
+            {/* Shipped */}
+            <div className="bg-[#f5f0eb] rounded-xl p-6 text-[#1a1a1a] shadow-sm relative border border-[#e1d5c9]">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <p className="text-[#8b7355] text-[10px] font-sans uppercase tracking-widest">Shipped</p>
+                <div className="flex items-end justify-between">
+                  <h3 className="text-3xl sm:text-4xl font-serif">{stats.shipped}</h3>
+                  <Truck size={20} className="text-[#8b7355]/60" />
+                </div>
+              </div>
+            </div>
+
+            {/* Delivered */}
+            <div className="col-span-2 sm:col-span-1 bg-[#1a1a1a] rounded-xl p-6 text-[#FDFCF8] shadow-sm relative border border-[#8b7355]/30">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <p className="text-[#e1d5c9] text-[10px] font-sans uppercase tracking-widest">Delivered</p>
+                <div className="flex items-end justify-between">
+                  <h3 className="text-3xl sm:text-4xl font-serif">{stats.delivered}</h3>
+                  <CheckCircle size={20} className="text-[#8b7355]" />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Table View */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+        {/* ── Main Content Area ── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-[#e1d5c9] overflow-hidden">
+          
+          {/* Toolbar (Tabs + Search) */}
+          <div className="p-4 sm:p-6 border-b border-[#e1d5c9]/60 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FDFCF8]/50">
+            {/* iOS-style segmented control */}
+            <div className="flex bg-[#f5f0eb] p-1.5 rounded-xl w-full md:w-fit border border-[#e1d5c9]/50">
+              <button 
+                onClick={() => setActiveTab("orders")}
+                className={`flex-1 md:w-32 py-2.5 rounded-lg text-[11px] font-sans font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === "orders" ? "bg-white text-[#1a1a1a] shadow-sm ring-1 ring-[#e1d5c9]" : "text-[#8b7355] hover:text-[#1a1a1a]"}`}
+              >
+                Orders
+              </button>
+              <button 
+                onClick={() => setActiveTab("products")}
+                className={`flex-1 md:w-32 py-2.5 rounded-lg text-[11px] font-sans font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === "products" ? "bg-white text-[#1a1a1a] shadow-sm ring-1 ring-[#e1d5c9]" : "text-[#8b7355] hover:text-[#1a1a1a]"}`}
+              >
+                Products
+              </button>
+            </div>
+
+            <div className="flex gap-3 w-full md:w-auto">
+              <div className="relative group w-full md:w-72">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b7355] group-focus-within:text-[#1a1a1a] transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder={`Search ${activeTab}...`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-11 pr-4 py-3 text-sm text-[#1a1a1a] outline-none transition-all shadow-sm font-sans"
+                />
+              </div>
+              {activeTab === "products" && (
+                <button 
+                  onClick={() => setShowAddProduct(true)}
+                  className="bg-[#1a1a1a] hover:bg-[#3a352f] text-[#FDFCF8] text-[10px] font-sans font-bold px-5 py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md border border-[#8b7355]/20 uppercase tracking-widest flex-shrink-0"
+                >
+                  <Plus size={16} /> <span className="hidden sm:inline">Add Product</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Table Container */}
           <div className="overflow-x-auto">
             {activeTab === "orders" ? (
-              <table className="w-full text-left">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#0A2540] text-white uppercase text-[10px] tracking-[0.2em] font-bold">
-                    <th className="px-5 py-4">Customer</th>
-                    <th className="px-5 py-4">Product</th>
-                    <th className="px-5 py-4">Details</th>
-                    <th className="px-5 py-4">Total</th>
-                    <th className="px-5 py-4">Payment</th>
-                    <th className="px-5 py-4">Date</th>
-                    <th className="px-5 py-4">Status</th>
+                  <tr className="bg-[#FDFCF8] border-b border-[#e1d5c9] text-[#8b7355] uppercase text-[10px] items-center tracking-[0.15em] font-serif font-bold">
+                    <th className="px-6 py-5 whitespace-nowrap">Customer Info</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Product Details</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Order Specs</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Value</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Payment</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Date</th>
+                    <th className="px-6 py-5 whitespace-nowrap text-right">Fulfillment</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-[#e1d5c9]/40 bg-white">
                   {fetching ? (
-                    <tr><td colSpan={6} className="py-20 text-center"><div className="w-8 h-8 border-4 border-[#0A2540] border-t-transparent rounded-full animate-spin mx-auto" /></td></tr>
+                    <tr><td colSpan={7} className="py-32 text-center"><div className="w-10 h-10 border-4 border-[#8b7355] border-t-transparent rounded-full animate-spin mx-auto shadow-md" /></td></tr>
                   ) : filteredOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-20 text-center">
-                        <Box size={48} className="text-gray-200 mx-auto mb-4" />
-                        <p className="text-gray-400 font-medium">{searchQuery ? "No results found" : "No orders yet"}</p>
+                      <td colSpan={7} className="py-32 text-center">
+                        <div className="w-20 h-20 bg-[#f5f0eb] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#e1d5c9]">
+                          <Box size={32} className="text-[#8b7355]" />
+                        </div>
+                        <p className="text-[#1a1a1a] font-serif font-medium text-lg">{searchQuery ? "No matching orders" : "Your inbox is empty"}</p>
+                        <p className="text-gray-500 text-sm mt-1">When customers place orders, they will appear here.</p>
                       </td>
                     </tr>
                   ) : (
                     filteredOrders.map((order) => {
                       const s = STATUS_CONFIG[order.status];
                       return (
-                        <tr key={order.id} className="hover:bg-gray-50/60 transition-colors">
-                          <td className="px-5 py-4">
-                            <p className="font-semibold text-[#0A2540]">{order.profiles?.full_name ?? "—"}</p>
-                            <p className="text-gray-400 text-xs truncate max-w-[160px]">{order.profiles?.email ?? "—"}</p>
-                            <p className="text-gray-400 text-xs truncate max-w-[160px]">{order.profiles?.mobile ?? "—"}</p>
+                        <tr key={order.id} className="hover:bg-[#f5f0eb]/50 transition-colors group">
+                          {/* Customer */}
+                          <td className="px-6 py-5 align-top">
+                            <div className="flex flex-col">
+                              <span className="font-serif font-medium text-[#1a1a1a] text-sm">{order.profiles?.full_name || order.customer_name || "Unknown"}</span>
+                              <span className="text-gray-500 text-xs mt-0.5">{order.profiles?.email ?? "No email"}</span>
+                              <span className="text-gray-400 text-[11px] mt-0.5 font-medium">{order.profiles?.mobile ?? ""}</span>
+                            </div>
                           </td>
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {/* Product */}
+                          <td className="px-6 py-5 align-top">
+                            <div className="flex items-start gap-4">
+                              <div className="w-14 h-14 rounded-xl bg-[#f5f0eb] flex items-center justify-center overflow-hidden flex-shrink-0 border border-[#e1d5c9] shadow-sm">
                                 {order.products?.image ? (
-                                  <img src={order.products.image} alt="" className="w-full h-full object-cover" />
+                                  <img src={order.products.image} alt="" className="w-full h-full object-contain p-1" />
                                 ) : (
                                   <Package size={20} className="text-gray-300" />
                                 )}
                               </div>
-                              <span className="font-medium text-gray-800">{order.product_name}</span>
+                              <div className="flex flex-col">
+                                <span className="font-serif font-medium text-[#1a1a1a] text-sm leading-tight max-w-[200px]">{order.product_name}</span>
+                                <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold mt-2">ID: {order.id.slice(0, 8)}...</span>
+                              </div>
                             </div>
                           </td>
-                          <td className="px-5 py-4 text-gray-500 text-xs">
-                            {order.size && <div>Size: {order.size}</div>}
-                            {order.color && <div>Color: {order.color}</div>}
-                            <div>Qty: {order.quantity}</div>
-                            {order.customer_name && <div className="mt-1 font-bold text-[#0A2540]">For: {order.customer_name}</div>}
-                            {(order.shipping_address || order.shipping_city) && (
-                              <div className="mt-1 text-[10px] leading-tight text-gray-400">
-                                {order.shipping_address}, {order.shipping_city}, {order.shipping_state} - {order.shipping_pincode}
-                              </div>
-                            )}
-                            {order.notes && <div className="mt-1 italic truncate max-w-[150px]" title={order.notes}>Note: {order.notes}</div>}
+                          {/* Specs */}
+                          <td className="px-6 py-5 align-top text-gray-600 text-xs">
+                            <div className="space-y-1">
+                              {order.size && <div className="flex gap-2"><span className="text-gray-400 font-medium tracking-wide">Size:</span> <span className="font-bold">{order.size}</span></div>}
+                              {order.color && <div className="flex gap-2"><span className="text-gray-400 font-medium tracking-wide">Color:</span> <span className="font-bold">{order.color}</span></div>}
+                              <div className="flex gap-2"><span className="text-gray-400 font-medium tracking-wide">Qty:</span> <span className="font-black text-[#8b7355]">{order.quantity} units</span></div>
+                              {(order.shipping_address || order.shipping_city) && (
+                                <div className="mt-3 text-[11px] leading-relaxed text-gray-500 bg-[#f5f0eb] p-2 rounded-lg border border-[#e1d5c9] max-w-[200px]">
+                                  {order.shipping_address}, {order.shipping_city}, {order.shipping_state} - <span className="font-bold">{order.shipping_pincode}</span>
+                                </div>
+                              )}
+                              {order.notes && <div className="mt-2 text-[#8b7355] bg-[#f5f0eb] p-2 rounded-lg border border-[#e1d5c9] text-[11px] italic" title={order.notes}>Note: {order.notes}</div>}
+                            </div>
                           </td>
-                          <td className="px-5 py-4 font-bold text-[#0A2540]">
-                            {order.total_price ? `₹${order.total_price.toLocaleString()}` : "—"}
+                          {/* Total */}
+                          <td className="px-6 py-5 align-top">
+                            <span className="font-serif font-medium text-lg text-[#1a1a1a]">
+                              {order.total_price ? `₹${order.total_price.toLocaleString()}` : "—"}
+                            </span>
                           </td>
-                          <td className="px-5 py-4">
+                          {/* Payment */}
+                          <td className="px-6 py-5 align-top">
                             {order.payment_status === "paid" ? (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest border border-green-100">
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f0f5ef] text-[#6c8b55] text-[10px] font-bold uppercase tracking-widest border border-[#6c8b55]/30">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#6c8b55] animate-pulse" />
                                 Paid
                               </div>
                             ) : (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-widest border border-gray-100 italic">
+                              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f5f0eb] text-gray-500 text-[10px] font-bold uppercase tracking-widest border border-[#e1d5c9]">
                                 Pending
                               </div>
                             )}
                             {order.payment_method && (
-                              <div className="text-[9px] text-gray-400 mt-1 font-bold">{order.payment_method}</div>
+                              <div className="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-wider flex items-center gap-1">
+                                {order.payment_method} <ArrowUpRight size={10} />
+                              </div>
                             )}
                           </td>
-                          <td className="px-5 py-4 text-gray-500 text-xs whitespace-nowrap">
-                            {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          {/* Date */}
+                          <td className="px-6 py-5 align-top text-gray-500 text-xs font-medium whitespace-nowrap">
+                            {new Date(order.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: '2-digit', minute:'2-digit' })}
                           </td>
-                          <td className="px-5 py-4">
-                            <div className="relative inline-block">
+                          {/* Status / Actions */}
+                          <td className="px-6 py-5 align-top text-right">
+                            <div className="relative inline-block w-36">
                               <select
                                 value={order.status}
                                 disabled={updating === order.id}
                                 onChange={(e) => updateStatus(order.id, e.target.value as OrderStatus)}
-                                className={`appearance-none pl-2 pr-7 py-1 rounded-full border text-xs font-semibold cursor-pointer ${s.color} ${updating === order.id ? "opacity-50" : ""}`}
+                                className={`w-full appearance-none pl-4 pr-8 py-2.5 rounded-xl border text-[10px] uppercase font-bold tracking-widest cursor-pointer transition-all outline-none focus:ring-2 focus:ring-[#8b7355]/20 ${s.bg} ${s.color} ${updating === order.id ? "opacity-50" : "hover:brightness-95"}`}
                               >
                                 {ALL_STATUSES.map((st) => (
-                                  <option key={st} value={st}>{STATUS_CONFIG[st].label}</option>
+                                  <option key={st} value={st} className="text-[#1a1a1a] font-medium uppercase">{STATUS_CONFIG[st].label}</option>
                                 ))}
                               </select>
-                              <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
+                              <ChevronDown size={14} className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-60 ${s.color}`} />
                             </div>
                           </td>
                         </tr>
@@ -399,55 +460,65 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             ) : (
-              <table className="w-full text-left">
+              // PRODUCTS TABLE
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#0A2540] text-white uppercase text-[10px] tracking-[0.2em] font-bold">
-                    <th className="px-5 py-4 w-20">Image</th>
-                    <th className="px-5 py-4">Product ID</th>
-                    <th className="px-5 py-4">Description</th>
-                    <th className="px-5 py-4">Category</th>
-                    <th className="px-5 py-4">Price</th>
-                    <th className="px-5 py-4">Date</th>
-                    <th className="px-5 py-4 text-right">Actions</th>
+                  <tr className="bg-[#FDFCF8] border-b border-[#e1d5c9] text-[#8b7355] uppercase text-[10px] items-center tracking-[0.15em] font-serif font-bold">
+                    <th className="px-6 py-5 w-24">Image</th>
+                    <th className="px-6 py-5">Product Info</th>
+                    <th className="px-6 py-5">Category & Size</th>
+                    <th className="px-6 py-5">Price</th>
+                    <th className="px-6 py-5">Added On</th>
+                    <th className="px-6 py-5 text-right">Settings</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-[#e1d5c9]/40 bg-white">
                   {fetching ? (
-                    <tr><td colSpan={7} className="py-20 text-center"><div className="w-8 h-8 border-4 border-[#0A2540] border-t-transparent rounded-full animate-spin mx-auto" /></td></tr>
+                    <tr><td colSpan={6} className="py-32 text-center"><div className="w-10 h-10 border-4 border-[#8b7355] border-t-transparent rounded-full animate-spin mx-auto shadow-md" /></td></tr>
                   ) : filteredProducts.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-20 text-center">
-                        <Box size={48} className="text-gray-200 mx-auto mb-4" />
-                        <p className="text-gray-400 font-medium">{searchQuery ? "No results found" : "No products found"}</p>
+                      <td colSpan={6} className="py-32 text-center">
+                        <div className="w-20 h-20 bg-[#f5f0eb] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#e1d5c9]">
+                          <Package size={32} className="text-[#8b7355]" />
+                        </div>
+                        <p className="text-[#1a1a1a] font-serif font-medium text-lg">{searchQuery ? "No matching products" : "No products added"}</p>
                       </td>
                     </tr>
                   ) : (
                     filteredProducts.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="px-5 py-4">
-                          <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-                            <img src={product.image} alt="" className="w-full h-full object-cover" />
+                      <tr key={product.id} className="hover:bg-[#f5f0eb]/50 transition-colors group">
+                        <td className="px-6 py-4 align-middle">
+                          <div className="w-16 h-16 rounded-2xl bg-[#f5f0eb] flex items-center justify-center overflow-hidden border border-[#e1d5c9] shadow-sm">
+                            <img src={product.image} alt="" className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500" />
                           </div>
                         </td>
-                        <td className="px-5 py-4">
-                          <p className="font-bold text-[#0A2540]">{product.description}</p>
-                          <p className="text-[10px] uppercase tracking-widest text-gray-400 font-black">{product.id}</p>
+                        <td className="px-6 py-4 align-middle">
+                          <p className="font-serif font-medium text-[#1a1a1a] tracking-wide">{product.description}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold bg-[#f5f0eb] px-2 py-0.5 rounded-md border border-[#e1d5c9]">{product.id}</p>
+                            {product.badge && <span className="text-[10px] font-bold text-[#8b7355] bg-[#f5f0eb] px-2 py-0.5 rounded-md border border-[#e1d5c9]">{product.badge}</span>}
+                          </div>
                         </td>
-                        <td className="px-5 py-4">
-                          <span className="text-xs font-bold text-gray-500">{product.category}</span>
-                          <div className="text-[10px] text-gray-400">Size: {product.size}</div>
+                        <td className="px-6 py-4 align-middle">
+                          <span className="text-xs font-bold font-serif text-[#1a1a1a] bg-[#f5f0eb] border border-[#e1d5c9] px-3 py-1 rounded-lg tracking-wider uppercase">{product.category}</span>
+                          <div className="text-[11px] text-gray-400 mt-2 font-medium flex items-center gap-1">
+                            <Box size={12} /> {product.size}
+                          </div>
                         </td>
-                        <td className="px-5 py-4 font-bold text-[#0A2540]">₹{product.price.toLocaleString()}</td>
-                        <td className="px-5 py-4 text-gray-400 text-xs">
-                          {new Date(product.created_at).toLocaleDateString()}
+                        <td className="px-6 py-4 align-middle">
+                          <span className="font-serif font-medium text-lg text-[#1a1a1a]">₹{product.price.toLocaleString()}</span>
                         </td>
-                        <td className="px-5 py-4 text-right">
+                        <td className="px-6 py-4 align-middle text-gray-500 text-xs font-medium">
+                          {new Date(product.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+                        </td>
+                        <td className="px-6 py-4 align-middle text-right">
                           <button 
                             onClick={() => deleteProduct(product.id)}
                             disabled={updating === product.id}
-                            className="text-gray-300 hover:text-red-500 transition-colors"
+                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                            title="Delete Product"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={18} />
                           </button>
                         </td>
                       </tr>
@@ -458,120 +529,127 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* ── Add Product Modal ── */}
+      {/* ── Beautiful Add Product Modal ── */}
       {showAddProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0A2540]/60 backdrop-blur-sm" onClick={() => setShowAddProduct(false)} />
-          <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-black text-[#0A2540] tracking-tight">Add New Product</h2>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Product Details</p>
-                </div>
-                <button onClick={() => setShowAddProduct(false)} className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={() => setShowAddProduct(false)} />
+          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-[#e1d5c9]">
+            {/* Header */}
+            <div className="px-8 py-6 border-b border-[#e1d5c9]/60 flex items-center justify-between bg-[#FDFCF8]">
+              <div>
+                <h2 className="text-2xl font-serif font-medium text-[#1a1a1a] tracking-wide">Add New Product</h2>
+                <p className="text-[10px] text-[#8b7355] font-bold uppercase tracking-widest mt-1">Expand your catalog</p>
               </div>
+              <button onClick={() => setShowAddProduct(false)} className="w-10 h-10 bg-[#f5f0eb] rounded-full hover:bg-[#e1d5c9] flex items-center justify-center transition-colors border border-[#e1d5c9]/60 shadow-sm group">
+                <Plus size={20} className="text-[#8b7355] rotate-45 group-hover:text-[#1a1a1a] transition-colors" />
+              </button>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                <div className="col-span-2 space-y-4">
-                   <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Product ID (Unique)</label>
-                        <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={14} />
-                          <input 
-                            type="text" placeholder="e.g. mb-1" 
-                            value={newProduct.id} onChange={(e) => setNewProduct({...newProduct, id: e.target.value})}
-                            className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Category</label>
-                        <select 
-                          value={newProduct.categorySlug} 
-                          onChange={(e) => {
-                            const slug = e.target.value;
-                            const label = slug === "top-bottom" ? "Top-bottom box" : slug === "magnet" ? "Magnet box" : "Drawer box";
-                            setNewProduct({...newProduct, categorySlug: slug, category: label});
-                          }}
-                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all appearance-none"
-                        >
-                          <option value="top-bottom">Top-bottom box</option>
-                          <option value="magnet">Magnet box</option>
-                          <option value="drawer">Drawer box</option>
-                        </select>
-                      </div>
-                   </div>
-
-                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Description / Name</label>
+            <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar bg-white">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                 <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Product ID (Unique)</label>
                     <div className="relative">
-                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={14} />
+                      <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b7355]" size={16} />
                       <input 
-                        type="text" placeholder="e.g. Rigid Box for Jewellery" 
-                        value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
-                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                        type="text" placeholder="e.g. mb-1" 
+                        value={newProduct.id} onChange={(e) => setNewProduct({...newProduct, id: e.target.value})}
+                        className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-12 pr-4 py-3.5 text-sm font-bold text-[#1a1a1a] outline-none transition-all"
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Price (₹)</label>
-                      <input 
-                        type="number" placeholder="50.00" 
-                        value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
-                      />
+                 </div>
+                 <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Category</label>
+                    <div className="relative">
+                      <select 
+                        value={newProduct.categorySlug} 
+                        onChange={(e) => {
+                          const slug = e.target.value;
+                          const label = slug === "top-bottom" ? "Top-bottom box" : slug === "magnet" ? "Magnet box" : "Drawer box";
+                          setNewProduct({...newProduct, categorySlug: slug, category: label});
+                        }}
+                        className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-4 pr-10 py-3.5 text-sm font-bold text-[#1a1a1a] outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="top-bottom">Top-bottom box</option>
+                        <option value="magnet">Magnet box</option>
+                        <option value="drawer">Drawer box</option>
+                      </select>
+                      <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8b7355] pointer-events-none" />
                     </div>
-                    <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Standard Size</label>
-                      <div className="relative">
-                        <Box className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={14} />
-                        <input 
-                          type="text" placeholder="2.5x3x1.5" 
-                          value={newProduct.size} onChange={(e) => setNewProduct({...newProduct, size: e.target.value})}
-                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                 </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Image URL</label>
+                 <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Product Title</label>
+                  <div className="relative">
+                    <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b7355]" size={16} />
                     <input 
-                      type="text" placeholder="/images/products/example.webp" 
-                      value={newProduct.image} onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
-                      className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Product Badge (Optional)</label>
-                    <input 
-                      type="text" placeholder="Premium, New, Sale..." 
-                      value={newProduct.badge} onChange={(e) => setNewProduct({...newProduct, badge: e.target.value})}
-                      className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                      type="text" placeholder="e.g. Premium Rigid Box for Jewellery" 
+                      value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+                      className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-12 pr-4 py-3.5 text-sm font-bold text-[#1a1a1a] outline-none transition-all"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="pt-8">
-                <button 
-                  onClick={addProduct}
-                  disabled={!newProduct.id || !newProduct.description || !newProduct.price || updating === "new"}
-                  className="w-full py-4 bg-[#0A2540] text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#163a5f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl shadow-[#0A2540]/20"
-                >
-                  {updating === "new" ? <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> : <Plus size={16} />} 
-                  {updating === "new" ? "Creating..." : "Create Product"}
-                </button>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Price (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b7355] font-serif font-bold">₹</span>
+                    <input 
+                      type="number" placeholder="50" 
+                      value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                      className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-10 pr-4 py-3.5 text-sm font-serif font-medium text-[#1a1a1a] outline-none transition-all"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Dimensions / Size</label>
+                  <div className="relative">
+                    <Box className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b7355]" size={16} />
+                    <input 
+                      type="text" placeholder="2.5x3x1.5" 
+                      value={newProduct.size} onChange={(e) => setNewProduct({...newProduct, size: e.target.value})}
+                      className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl pl-12 pr-4 py-3.5 text-sm font-medium text-[#1a1a1a] outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Image URL</label>
+                  <input 
+                    type="text" placeholder="https://example.com/image.jpg" 
+                    value={newProduct.image} onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                    className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl px-4 py-3.5 text-sm font-medium text-[#1a1a1a] outline-none transition-all"
+                  />
+                  {/* Image Preview */}
+                  {newProduct.image && (
+                    <div className="mt-3 w-16 h-16 rounded-xl border border-[#e1d5c9] overflow-hidden bg-[#f5f0eb]">
+                       <img src={newProduct.image} alt="Preview" className="w-full h-full object-contain p-1" onError={(e) => e.currentTarget.style.display = 'none'} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#8b7355] mb-2 ml-1">Badge / Tag (Optional)</label>
+                  <input 
+                    type="text" placeholder="e.g. Best Seller, New Arrival" 
+                    value={newProduct.badge} onChange={(e) => setNewProduct({...newProduct, badge: e.target.value})}
+                    className="w-full bg-white border border-[#e1d5c9] focus:border-[#8b7355] focus:ring-2 focus:ring-[#8b7355]/10 rounded-xl px-4 py-3.5 text-sm font-medium text-[#1a1a1a] outline-none transition-all"
+                  />
+                </div>
               </div>
+            </div>
+
+            <div className="p-6 border-t border-[#e1d5c9]/60 bg-[#FDFCF8]">
+              <button 
+                onClick={addProduct}
+                disabled={!newProduct.id || !newProduct.description || !newProduct.price || updating === "new"}
+                className="w-full py-4 bg-[#1a1a1a] text-[#FDFCF8] rounded-xl font-bold uppercase tracking-widest text-[11px] hover:bg-[#3a352f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+              >
+                {updating === "new" ? <div className="w-4 h-4 border-2 border-[#e1d5c9]/40 border-t-[#e1d5c9] rounded-full animate-spin" /> : <Plus size={16} />} 
+                {updating === "new" ? "Creating Product..." : "Launch Product"}
+              </button>
             </div>
           </div>
         </div>
