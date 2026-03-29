@@ -47,15 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function handleSession(currentSession: Session | null) {
       if (!mounted) return;
-      const startTime = performance.now();
-      console.log("Auth Provider: Handling session for", currentSession?.user?.email ?? "Guest");
-      
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
 
       if (currentSession?.user) {
         try {
-          console.log("Auth Provider: Fetching profile...");
           const { error: profileError, data: profile } = await supabase
             .from("profiles")
             .select("*")
@@ -66,11 +62,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (mounted) {
             setProfile(profile ?? null);
-            const duration = (performance.now() - startTime).toFixed(0);
-            console.log(`Auth Provider: Profile resolved in ${duration}ms`);
           }
         } catch (err) {
-          console.error("Auth Provider: Profile fetch error:", err);
+          if (mounted) setProfile(null);
         }
       } else {
         setProfile(null);
@@ -80,13 +74,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     async function initAuth() {
-      console.log("Auth Provider: Initializing...");
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) throw error;
         await handleSession(session);
       } catch (err: any) {
-        console.error("Auth Provider: Init error:", err);
         if (mounted) setLoading(false);
       }
     }
@@ -94,7 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth Provider: Event:", event);
       if (event === "SIGNED_OUT") {
         setSession(null);
         setUser(null);

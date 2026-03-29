@@ -2,9 +2,9 @@
 
 export default function Newsletter() {
   return (
-    <section className="w-full py-24 bg-white" id="newsletter">
+    <section className="w-full py-24 bg-brand-cream" id="newsletter">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-4xl md:text-5xl font-black text-black tracking-tighter mb-4">JOIN THE MOVEMENT</h2>
+        <h2 className="text-4xl md:text-5xl font-semibold text-black tracking-tighter mb-4">JOIN THE MOVEMENT</h2>
         <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
           Subscribe to our newsletter and get <strong className="text-black">10% off</strong> your first order of sustainable packaging.
         </p>
@@ -18,7 +18,7 @@ export default function Newsletter() {
             />
             <button 
                 type="submit"
-                className="w-full sm:w-1/3 px-6 py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-[#0A2540] hover:text-white transition-colors"
+                className="w-full sm:w-1/3 px-6 py-4 bg-black text-white font-normal uppercase tracking-widest hover:bg-brand-dark-brown hover:text-white transition-colors"
             >
                 Subscribe
             </button>

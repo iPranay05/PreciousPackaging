@@ -17,9 +17,9 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-24 bg-white" id="faq">
+    <section className="py-24 bg-brand-cream" id="faq">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl md:text-5xl font-black text-black tracking-tighter text-center mb-16">FREQUENTLY ASKED</h2>
+        <h2 className="text-4xl md:text-5xl font-semibold text-black tracking-tighter text-center mb-16">FREQUENTLY ASKED</h2>
         
         <div className="space-y-4">
           {faqs.map((faq, index) => (
@@ -28,8 +28,8 @@ export default function FAQ() {
                 className="w-full flex justify-between items-center py-4 text-left focus:outline-none"
                 onClick={() => toggleFAQ(index)}
               >
-                <span className="text-xl font-bold text-gray-900 pr-8">{faq.question}</span>
-                <span className={`text-2xl transition-transform duration-300 ${openIndex === index ? 'rotate-45 text-[#0A2540]' : 'text-gray-400'}`}>+</span>
+                <span className="text-xl font-normal text-gray-900 pr-8">{faq.question}</span>
+                <span className={`text-2xl transition-transform duration-300 ${openIndex === index ? 'rotate-45 text-brand-dark-brown' : 'text-gray-400'}`}>+</span>
               </button>
               <div 
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}

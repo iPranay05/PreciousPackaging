@@ -27,18 +27,18 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="py-20 bg-white" id="featured">
+    <section className="py-20 bg-brand-cream" id="featured">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex justify-between items-end mb-10">
           <div>
-            <h2 className="text-4xl md:text-5xl font-black text-black mb-3 tracking-tighter">BEST SELLERS</h2>
+            <h2 className="text-4xl md:text-5xl font-semibold text-black mb-3 tracking-tighter">BEST SELLERS</h2>
             <p className="text-gray-500 font-medium max-w-xl">
               Our most sought-after sustainable packaging solutions, loved by premium brands worldwide.
             </p>
           </div>
           <Link href="/products">
-            <button className="hidden sm:block px-6 py-2 border-2 border-black font-bold uppercase tracking-widest bg-black text-white hover:bg-gray-800 transition-colors text-sm">
+            <button className="hidden sm:block px-6 py-2 border-2 border-black font-normal uppercase tracking-widest bg-black text-white hover:bg-gray-800 transition-colors text-sm">
               Shop All
             </button>
           </Link>
@@ -68,7 +68,7 @@ export default function FeaturedProducts() {
               >
                 <Image src={item.image} alt={item.text} fill className="object-cover" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                  <p className="text-white font-bold text-sm">{item.text}</p>
+                  <p className="text-white font-normal text-sm">{item.text}</p>
                 </div>
               </div>
             ))}
@@ -76,7 +76,7 @@ export default function FeaturedProducts() {
 
           <div className="flex justify-center mt-6">
             <Link href="/products">
-              <button className="px-6 py-2 border-2 border-black font-bold uppercase tracking-widest bg-black text-white text-sm">
+              <button className="px-6 py-2 border-2 border-black font-normal uppercase tracking-widest bg-black text-white text-sm">
                 Shop All
               </button>
             </Link>

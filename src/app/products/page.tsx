@@ -99,7 +99,7 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
           {/* Wishlist button */}
           <button
             onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }}
-            className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 bg-white/90 rounded-full shadow-sm flex items-center justify-center transition-all hover:scale-110 hover:bg-white z-10 border border-black/5"
+            className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 bg-brand-cream/90 rounded-full shadow-sm flex items-center justify-center transition-all hover:scale-110 hover:bg-brand-cream z-10 border border-black/5"
             aria-label="Add to wishlist"
           >
             <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${wishlisted ? "text-red-500 fill-red-500" : "text-gray-400"}`} />
@@ -107,18 +107,18 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
 
           {/* Badge */}
           {product.badge && (
-            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-[#8b7355] text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-sm tracking-widest z-10 uppercase">
+            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-brand-brown text-white text-[8px] sm:text-[9px] font-normal px-2 py-0.5 rounded-sm tracking-widest z-10 uppercase">
               {product.badge}
             </span>
           )}
 
           {/* Quick View Hover Bar */}
           <div className="absolute bottom-0 left-0 right-0 bg-[#3a352f]/90 text-[#f5f0eb] flex divide-x divide-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20">
-            <div className="flex-1 py-1.5 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-black/20 transition-colors cursor-pointer text-[8px] sm:text-[10px] uppercase font-bold tracking-widest leading-none">
+            <div className="flex-1 py-1.5 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-black/20 transition-colors cursor-pointer text-[8px] sm:text-[10px] uppercase font-normal tracking-widest leading-none">
               <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>Quick View</span>
             </div>
-            <div className="flex-1 py-1.5 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-black/20 transition-colors cursor-pointer text-[8px] sm:text-[10px] uppercase font-bold tracking-widest leading-none">
+            <div className="flex-1 py-1.5 flex items-center justify-center gap-1 sm:gap-1.5 hover:bg-black/20 transition-colors cursor-pointer text-[8px] sm:text-[10px] uppercase font-normal tracking-widest leading-none">
               <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span>Details</span>
             </div>
@@ -131,13 +131,13 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
       <div className="flex flex-col gap-1 sm:gap-2 pt-3 sm:pt-4 flex-1">
         
         <Link href={`/products/${product.id}`}>
-          <h3 className="text-xs sm:text-sm font-serif font-medium text-[#1a1a1a] leading-tight sm:leading-snug tracking-wide group-hover:text-[#8b7355] transition-colors uppercase">
+          <h3 className="text-xs sm:text-sm font-serif font-medium text-brand-charcoal leading-tight sm:leading-snug tracking-wide group-hover:text-brand-brown transition-colors uppercase">
             {product.description}
           </h3>
         </Link>
         
         <div className="flex flex-col mt-auto pb-1">
-          <p className="text-xs sm:text-sm font-serif text-[#1a1a1a] tracking-wider mb-0.5 sm:mb-1">
+          <p className="text-xs sm:text-sm font-serif text-brand-charcoal tracking-wider mb-0.5 sm:mb-1">
             ₹{product.price} <span className="text-[10px] sm:text-[11px] text-gray-500 font-sans tracking-normal">/ Unit</span>
           </p>
           <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-semibold">MOQ: 300</p>
@@ -146,17 +146,17 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
         {/* Color Swatches (Placeholders) & Add to Cart */}
         <div className="flex items-center justify-between mt-1 h-7">
           <div className="flex gap-1 sm:gap-1.5">
-            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#222222] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-[#8b7355] transition-all"></div>
-            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#4a0e1b] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-[#8b7355] transition-all"></div>
-            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#d2c9c2] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-[#8b7355] transition-all"></div>
+            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#222222] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-brand-brown transition-all"></div>
+            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#4a0e1b] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-brand-brown transition-all"></div>
+            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] bg-[#d2c9c2] shadow-sm border border-black/10 cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-brand-brown transition-all"></div>
           </div>
 
           <button
             onClick={handleAdd}
-            className={`px-2 py-1 sm:px-3 sm:py-1.5 whitespace-nowrap rounded-full text-[9px] sm:text-[10px] uppercase tracking-widest font-bold transition-all duration-300 border ${
+            className={`px-2 py-1 sm:px-3 sm:py-1.5 whitespace-nowrap rounded-full text-[9px] sm:text-[10px] uppercase tracking-widest font-normal transition-all duration-300 border ${
               added
                 ? "bg-[#6c8b55] text-white border-[#6c8b55]"
-                : "bg-white text-[#8b7355] border-[#8b7355]/40 hover:border-[#8b7355] hover:bg-[#faf8f5]"
+                : "bg-brand-cream text-brand-brown border-brand-brown/40 hover:border-brand-brown hover:bg-[#faf8f5]"
             }`}
           >
             {added ? "✓ Added" : "+ Cart"}
@@ -177,8 +177,6 @@ export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [cart, setCart] = useState<{ product: Product; qty: number }[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-  const [quoteState, setQuoteState] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [orderNotes, setOrderNotes] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -210,9 +208,7 @@ export default function ProductsPage() {
   const totalItems = cart.reduce((s, i) => s + i.qty, 0);
   const totalPrice = cart.reduce((s, i) => s + i.product.price * i.qty, 0);
 
-  const handleRequestQuote = async () => {
-    alert("Bulk checkout is currently disabled for security upgrades. Please checkout items individually from their product pages.");
-  };
+
 
   const filtered = products.filter((p) =>
     activeCategory === "all" || p.categorySlug === activeCategory
@@ -226,30 +222,30 @@ export default function ProductsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8]">
+    <div className="min-h-screen bg-brand-cream">
 
       {/* ─── Header ─── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDFCF8] border-b border-[#e5e0d8] shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-cream border-b border-[#e5e0d8] shadow-sm">
         <div className="max-w-[1400px] mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
             <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply" />
-            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-[#1a1a1a] group-hover:opacity-80 transition-opacity">
-              Precious<span className="text-[#1a1a1a]/70">Packaging</span>
+            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
+              Precious<span className="text-brand-charcoal/70">Packaging</span>
             </span>
           </Link>
-          <div className="flex items-center gap-6 sm:gap-8 text-sm text-[#1a1a1a]">
-            <Link href="/" className="hidden sm:block hover:text-[#8b7355] transition-colors">Home</Link>
+          <div className="flex items-center gap-6 sm:gap-8 text-sm text-brand-charcoal">
+            <Link href="/" className="hidden sm:block hover:text-brand-brown transition-colors">Home</Link>
             <button
               onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 hover:text-[#8b7355] transition-colors"
+              className="flex items-center gap-2 hover:text-brand-brown transition-colors"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               <span>Cart</span>
-              <span className="border border-[#e5e0d8] bg-[#FDFCF8] px-2 py-0.5 rounded-sm text-[11px] font-medium ml-1">
+              <span className="border border-[#e5e0d8] bg-brand-cream px-2 py-0.5 rounded-sm text-[11px] font-medium ml-1">
                 {totalItems} items
               </span>
             </button>
-            <Link href="/contact" className="hidden sm:flex items-center gap-1.5 hover:text-[#8b7355] transition-colors">
+            <Link href="/contact" className="hidden sm:flex items-center gap-1.5 hover:text-brand-brown transition-colors">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
               Help
             </Link>
@@ -258,11 +254,11 @@ export default function ProductsPage() {
       </header>
 
       {/* ─── Hero with Fabric Banner ─── */}
-      <section className="pt-[72px] relative w-full overflow-hidden bg-[#0A1828]">
+      <section className="pt-[72px] relative w-full overflow-hidden bg-brand-dark-brown">
         {/* Fabric Background Image */}
         <div className="absolute inset-0 w-full h-full scale-105 opacity-80">
           <Image 
-            src="/images/dark_navy_silk_bg.png" 
+            src="/images/earthy_silk_texture_bg.png" 
             alt="Luxury Fabric Background" 
             fill 
             className="object-cover"
@@ -271,13 +267,13 @@ export default function ProductsPage() {
         </div>
         
         {/* Dark overlay gradient to ensure text readability & blend edges */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A1828]/60 via-transparent to-[#0A1828]/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark-brown/60 via-transparent to-brand-dark-brown/90"></div>
 
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 pt-16 pb-6 text-center text-[#FDFCF8]">
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 pt-16 pb-6 text-center text-brand-cream">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-medium tracking-wide mb-3 uppercase shadow-black/50 drop-shadow-md">
             Our Products
           </h1>
-          <p className="text-[#FDFCF8]/80 text-sm sm:text-base max-w-lg mx-auto mb-16 font-light tracking-wide shadow-black/50 drop-shadow-sm">
+          <p className="text-brand-cream/80 text-sm sm:text-base max-w-lg mx-auto mb-16 font-light tracking-wide shadow-black/50 drop-shadow-sm">
             Bespoke Jewelry Packaging. Explore our curated collections.
           </p>
 
@@ -290,13 +286,13 @@ export default function ProductsPage() {
                   key={c.slug}
                   onClick={() => setActiveCategory(c.slug)}
                   className={`flex flex-col items-center gap-3 transition-all duration-300 ${
-                    isActive ? "text-[#FDFCF8] scale-105" : "text-[#FDFCF8]/50 hover:text-[#FDFCF8]/80"
+                    isActive ? "text-brand-cream scale-105" : "text-brand-cream/50 hover:text-brand-cream/80"
                   }`}
                 >
                   <div className="h-10 flex items-center justify-center">
                     {c.icon}
                   </div>
-                  <span className={`text-[10px] font-bold tracking-[0.15em] uppercase pb-1 border-b ${
+                  <span className={`text-[10px] font-normal tracking-[0.15em] uppercase pb-1 border-b ${
                     isActive ? "border-[#FDFCF8]" : "border-transparent"
                   }`}>
                     {c.label}
@@ -312,8 +308,8 @@ export default function ProductsPage() {
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-12">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-8 h-8 border-[3px] border-[#8b7355]/20 border-t-[#8b7355] rounded-full animate-spin" />
-            <p className="text-[#8b7355] font-serif tracking-widest text-xs uppercase">Loading Curations…</p>
+            <div className="w-8 h-8 border-[3px] border-brand-brown/20 border-t-[#8b7355] rounded-full animate-spin" />
+            <p className="text-brand-brown font-serif tracking-widest text-xs uppercase">Loading Curations…</p>
           </div>
         ) : Object.keys(grouped).length === 0 ? (
           <p className="text-center text-gray-500 py-20 font-serif italic text-lg opacity-60">No collections found.</p>
@@ -323,13 +319,13 @@ export default function ProductsPage() {
               <section key={catName} className="relative">
                 
                 {/* Elegant bounding container */}
-                <div className="border border-[#e1d5c9] rounded-2xl bg-white p-6 sm:p-10 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] relative mt-8">
+                <div className="border border-[#e1d5c9] rounded-2xl bg-brand-cream p-6 sm:p-10 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] relative mt-8">
                   
                   {/* Section Title floating on border */}
-                  <div className="absolute -top-[18px] left-6 sm:left-10 bg-[#FDFCF8] px-4 py-1 flex items-center gap-4">
-                    <div className="w-6 h-[1px] bg-[#8b7355]/40" />
-                    <h2 className="text-xl sm:text-2xl font-serif text-[#1a1a1a] tracking-widest">{catName}</h2>
-                    <div className="w-6 h-[1px] bg-[#8b7355]/40" />
+                  <div className="absolute -top-[18px] left-6 sm:left-10 bg-brand-cream px-4 py-1 flex items-center gap-4">
+                    <div className="w-6 h-[1px] bg-brand-brown/40" />
+                    <h2 className="text-xl sm:text-2xl font-serif text-brand-charcoal tracking-widest">{catName}</h2>
+                    <div className="w-6 h-[1px] bg-brand-brown/40" />
                   </div>
 
                   {/* Decorative inner corner flourishes (optional/subtle) */}
@@ -356,10 +352,10 @@ export default function ProductsPage() {
       {cartOpen && (
         <div className="fixed inset-0 z-[100] flex">
           <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
-          <div className="w-full max-w-sm bg-[#FDFCF8] h-full shadow-2xl flex flex-col overflow-hidden">
+          <div className="w-full max-w-sm bg-brand-cream h-full shadow-2xl flex flex-col overflow-hidden">
             <div className="px-6 py-5 border-b border-[#e5e0d8] flex items-center justify-between">
-              <h2 className="font-serif text-xl tracking-tight text-[#1a1a1a]">Your Cart {totalItems > 0 && `(${totalItems})`}</h2>
-              <button onClick={() => setCartOpen(false)} className="text-gray-400 hover:text-[#8b7355] transition-colors">
+              <h2 className="font-serif text-xl tracking-tight text-brand-charcoal">Your Cart {totalItems > 0 && `(${totalItems})`}</h2>
+              <button onClick={() => setCartOpen(false)} className="text-gray-400 hover:text-brand-brown transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -374,19 +370,26 @@ export default function ProductsPage() {
                 </div>
               ) : (
                 cart.map(({ product, qty }) => (
-                  <div key={product.id} className="py-5 flex gap-4 items-center group">
+                  <div key={product.id} className="py-5 flex gap-4 items-start group">
                     <div className="relative w-16 h-16 rounded-lg bg-[#eeeae6] flex-shrink-0 overflow-hidden border border-[#e1d5c9]/50">
                       <Image src={product.image} alt={product.description} fill className="object-contain p-2" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-serif text-sm leading-tight text-[#1a1a1a] truncate">{product.description}</p>
+                      <p className="font-serif text-sm leading-tight text-brand-charcoal truncate">{product.description}</p>
                       <p className="text-gray-400 text-xs mt-0.5 tracking-wider uppercase">{product.size} cm · {product.category}</p>
-                      <p className="text-[#8b7355] font-medium text-sm mt-1">₹{product.price} × {qty}</p>
+                      <p className="text-brand-brown font-medium text-sm mt-1">₹{product.price} × {qty}</p>
+                      <Link
+                        href={`/products/${product.id}`}
+                        className="inline-flex items-center gap-1 mt-2 text-[10px] uppercase tracking-widest text-brand-dark-brown font-semibold hover:text-brand-brown transition-colors border-b border-brand-dark-brown/30 hover:border-brand-brown pb-px"
+                        onClick={() => setCartOpen(false)}
+                      >
+                        Order Now →
+                      </Link>
                     </div>
                     <button onClick={() => handleRemove(product.id)} className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100 p-2">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                     </button>
                   </div>
                 ))
@@ -394,20 +397,18 @@ export default function ProductsPage() {
             </div>
 
             {cart.length > 0 && (
-              <div className="px-6 py-6 border-t border-[#e5e0d8] bg-white">
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between font-serif text-lg text-[#1a1a1a] font-bold tracking-wide">
-                  <span>Total</span>
+            <div className="px-6 py-6 border-t border-[#e5e0d8] bg-brand-cream">
+                <div className="pt-4 border-t border-gray-100 flex items-center justify-between font-serif text-lg text-brand-charcoal font-normal tracking-wide">
+                  <span>Est. Total</span>
                   <span>₹{totalPrice}</span>
                 </div>
-                <p className="text-[10px] uppercase tracking-widest text-[#8b7355] mb-5 font-bold">+12% GST · Shipping calculated at checkout</p>
+                <p className="text-[10px] uppercase tracking-widest text-brand-brown/70 mt-1 mb-5 font-normal">+12% GST · Shipping at checkout</p>
 
-                <button
-                  onClick={handleRequestQuote}
-                  disabled={quoteState === "loading" || quoteState === "success"}
-                  className="w-full bg-[#1a1a1a] text-[#FDFCF8] font-serif py-3.5 hover:bg-[#2a2a2a] transition-colors text-sm tracking-widest disabled:opacity-60 flex items-center justify-center gap-2"
-                >
-                  {user ? "PROCEED TO SECURE CHECKOUT" : "LOGIN TO CHECKOUT"}
-                </button>
+                <div className="bg-[#f5f0eb] rounded-xl p-4 border border-[#e1d5c9]">
+                  <p className="text-xs text-brand-charcoal/70 leading-relaxed">
+                    👆 Click <span className="font-semibold text-brand-dark-brown">Order Now</span> on each item above to customise size, colour & quantity before placing your order.
+                  </p>
+                </div>
               </div>
             )}
           </div>

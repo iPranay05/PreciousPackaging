@@ -38,7 +38,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A2540] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-brand-dark-brown flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
@@ -53,7 +53,7 @@ export default function Signup() {
 
         <form
           onSubmit={handleSignup}
-          className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm space-y-5"
+          className="bg-brand-cream/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm space-y-5"
         >
           {error && (
             <div className="bg-red-500/20 border border-red-500/40 text-red-300 text-sm px-4 py-3 rounded-lg">
@@ -62,7 +62,7 @@ export default function Signup() {
           )}
 
           <div>
-            <label className="block text-white/70 text-xs font-bold uppercase tracking-widest mb-2">
+            <label className="block text-white/70 text-xs font-normal uppercase tracking-widest mb-2">
               Full Name
             </label>
             <input
@@ -70,13 +70,13 @@ export default function Signup() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
+              className="w-full bg-brand-cream/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
               placeholder="Jane Doe"
             />
           </div>
 
           <div>
-            <label className="block text-white/70 text-xs font-bold uppercase tracking-widest mb-2">
+            <label className="block text-white/70 text-xs font-normal uppercase tracking-widest mb-2">
               Mobile Number
             </label>
             <input
@@ -84,13 +84,13 @@ export default function Signup() {
               required
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
+              className="w-full bg-brand-cream/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
               placeholder="+91 98765 43210"
             />
           </div>
 
           <div>
-            <label className="block text-white/70 text-xs font-bold uppercase tracking-widest mb-2">
+            <label className="block text-white/70 text-xs font-normal uppercase tracking-widest mb-2">
               Email
             </label>
             <input
@@ -98,13 +98,13 @@ export default function Signup() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
+              className="w-full bg-brand-cream/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-white/70 text-xs font-bold uppercase tracking-widest mb-2">
+            <label className="block text-white/70 text-xs font-normal uppercase tracking-widest mb-2">
               Password
             </label>
             <input
@@ -113,7 +113,7 @@ export default function Signup() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
+              className="w-full bg-brand-cream/10 border border-white/20 text-white rounded-lg px-4 py-3 text-sm outline-none focus:border-white/50 placeholder-white/30 transition-colors"
               placeholder="Min. 6 characters"
             />
           </div>
@@ -121,7 +121,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-white text-[#0A2540] font-bold uppercase tracking-widest py-3 rounded-lg text-sm hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-brand-cream text-brand-dark-brown font-normal uppercase tracking-widest py-3 rounded-lg text-sm hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating account…" : "Create Account"}
           </button>

@@ -17,8 +17,8 @@ export default function FourProductSection() {
         
         <div className="flex flex-col md:flex-row shadow-2xl relative w-full items-center mb-16 rounded-3xl overflow-hidden bg-[#1AA9CC]">
             <div className="w-full md:w-1/3 p-8 md:p-12 text-left relative z-10 bg-[#1696b6] h-full flex flex-col justify-center text-white">
-                <h2 className="text-2xl font-bold mb-2">New Format!</h2>
-                <h3 className="text-5xl font-black mb-4">More<br/>Practical</h3>
+                <h2 className="text-2xl font-normal mb-2">New Format!</h2>
+                <h3 className="text-5xl font-semibold mb-4">More<br/>Practical</h3>
                 <p className="text-lg italic opacity-90">even more sustainable</p>
             </div>
 
@@ -42,9 +42,9 @@ export default function FourProductSection() {
                     </div>
                     
                     <div className="mt-6 text-white text-center">
-                        <h4 className="font-bold text-sm sm:text-base leading-tight drop-shadow-md">{product.name}</h4>
+                        <h4 className="font-normal text-sm sm:text-base leading-tight drop-shadow-md">{product.name}</h4>
                         <p className="text-xs sm:text-sm mt-1 opacity-90 drop-shadow-sm mb-4">{product.desc}</p>
-                        <button className="px-6 py-1.5 bg-[#fede00] hover:bg-white text-black font-bold text-xs uppercase rounded transition-colors shadow border border-black/10">
+                        <button className="px-6 py-1.5 bg-[#fede00] hover:bg-brand-cream text-black font-normal text-xs uppercase rounded transition-colors shadow border border-black/10">
                             BUY
                         </button>
                     </div>

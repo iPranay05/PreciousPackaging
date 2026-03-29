@@ -14,10 +14,10 @@ const products = [
 
 export default function ProductGrid() {
   return (
-    <section className="py-24 bg-white" id="all-products">
+    <section className="py-24 bg-brand-cream" id="all-products">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-extrabold text-[#2d3a24] mb-4">OUR COLLECTION</h2>
+          <h2 className="text-4xl font-medium text-[#2d3a24] mb-4">OUR COLLECTION</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Discover our full range of sustainable, premium packaging solutions designed to elevate your brand.</p>
         </div>
 
@@ -41,7 +41,7 @@ export default function ProductGrid() {
               </div>
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{product.name}</h3>
+                  <h3 className="text-lg font-normal text-gray-900">{product.name}</h3>
                   <p className="text-gray-500">{product.price}</p>
                 </div>
                 <button className="w-10 h-10 rounded-full bg-black text-white flex justify-center items-center hover:bg-gray-800 transition-colors">
@@ -53,7 +53,7 @@ export default function ProductGrid() {
         </div>
         
         <div className="mt-16 text-center">
-            <button className="px-8 py-3 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
+            <button className="px-8 py-3 bg-brand-cream border-2 border-black text-black font-normal uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
                 View All Products
             </button>
         </div>

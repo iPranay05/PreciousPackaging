@@ -27,7 +27,7 @@ const PRESET_COLORS = [
   { label: "Ivory White",      hex: "#F5F0E8" },
   { label: "Champagne Gold",   hex: "#C9A84C" },
   { label: "Rose Gold",        hex: "#B76E79" },
-  { label: "Deep Navy",        hex: "#0A2540" },
+  { label: "Deep Navy",        hex: "#2E7D32" },
   { label: "Emerald Green",    hex: "#215A4A" },
   { label: "Blush Pink",       hex: "#F4C2C2" },
   { label: "Slate Grey",       hex: "#6B7280" },
@@ -200,7 +200,6 @@ export default function ProductDetailPage() {
             const verifyData = await verifyRes.json();
             
             if (verifyData.verified) {
-              console.log("Order placed successfully!");
               setOrderState("success");
               // Wait 3 seconds to show success message and optionally redirect
               setTimeout(() => {
@@ -221,7 +220,7 @@ export default function ProductDetailPage() {
           email: user?.email || "",
         },
         theme: {
-          color: "#0A2540",
+          color: "#2E7D32",
         },
       };
 
@@ -243,18 +242,18 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f9f9f9] gap-4">
-        <div className="w-8 h-8 border-4 border-[#0A2540]/20 border-t-[#0A2540] rounded-full animate-spin" />
-        <p className="text-[#0A2540] font-bold tracking-widest text-sm uppercase">Loading Product…</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-brand-cream gap-4">
+        <div className="w-8 h-8 border-4 border-brand-dark-brown/20 border-t-brand-dark-brown rounded-full animate-spin" />
+        <p className="text-brand-dark-brown font-normal tracking-widest text-sm uppercase">Loading Product…</p>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f9f9f9] gap-4">
-        <p className="text-2xl font-black text-[#0A2540]">Product not found</p>
-        <Link href="/products" className="text-sm text-[#0A2540]/60 hover:text-[#0A2540] underline underline-offset-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-brand-cream gap-4">
+        <p className="text-2xl font-semibold text-brand-dark-brown">Product not found</p>
+        <Link href="/products" className="text-sm text-brand-dark-brown/60 hover:text-brand-dark-brown underline underline-offset-4">
           ← Back to Products
         </Link>
       </div>
@@ -263,12 +262,12 @@ export default function ProductDetailPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
 
       {/* ── Sticky header ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDFCF8]/95 backdrop-blur-sm border-b border-[#e5e0d8]">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-cream/95 backdrop-blur-sm border-b border-[#e5e0d8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
-          <button onClick={() => router.back()} className="text-[#1a1a1a]/60 hover:text-[#1a1a1a] text-sm font-medium transition-colors flex items-center gap-1.5">
+          <button onClick={() => router.back()} className="text-brand-charcoal/60 hover:text-brand-charcoal text-sm font-medium transition-colors flex items-center gap-1.5">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -277,19 +276,19 @@ export default function ProductDetailPage() {
           <div className="flex-1" />
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
             <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply" />
-            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-[#1a1a1a] group-hover:opacity-80 transition-opacity">
-              Precious<span className="text-[#1a1a1a]/70">Packaging</span>
+            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
+              Precious<span className="text-brand-charcoal/70">Packaging</span>
             </span>
           </Link>
           <div className="flex-1" />
-          <Link href="/products" className="hidden sm:block text-[#1a1a1a]/50 hover:text-[#1a1a1a] text-xs font-medium transition-colors">
+          <Link href="/products" className="hidden sm:block text-brand-charcoal/50 hover:text-brand-charcoal text-xs font-medium transition-colors">
             All Products
           </Link>
         </div>
       </header>
 
       {/* ── Breadcrumb ── */}
-      <div className="pt-16 bg-[#0A2540]">
+      <div className="pt-16 bg-brand-dark-brown">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-2 text-xs text-white/40 font-medium">
           <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
           <span>/</span>
@@ -320,7 +319,7 @@ export default function ProductDetailPage() {
                 priority
               />
               {product.badge && (
-                <div className="absolute top-5 left-5 bg-[#0A2540] text-white text-xs font-black px-4 py-1.5 rounded-full tracking-widest uppercase shadow-lg">
+                <div className="absolute top-5 left-5 bg-brand-dark-brown text-white text-xs font-semibold px-4 py-1.5 rounded-full tracking-widest uppercase shadow-lg">
                   {product.badge}
                 </div>
               )}
@@ -331,7 +330,7 @@ export default function ProductDetailPage() {
               {[1, 0.65, 0.45, 0.3].map((op, i) => (
                 <div
                   key={i}
-                  className={`relative aspect-square rounded-2xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} cursor-pointer border-2 transition-all duration-200 ${i === 0 ? "border-[#0A2540]" : "border-transparent hover:border-[#0A2540]/40"}`}
+                  className={`relative aspect-square rounded-2xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} cursor-pointer border-2 transition-all duration-200 ${i === 0 ? "border-brand-dark-brown" : "border-transparent hover:border-brand-dark-brown/40"}`}
                 >
                   <Image
                     src={product.image}
@@ -350,30 +349,30 @@ export default function ProductDetailPage() {
 
             {/* Category tag + name */}
             <div>
-              <p className="text-xs font-bold text-[#0A2540]/40 uppercase tracking-widest mb-2">{product.category}</p>
-              <h1 className="text-4xl sm:text-5xl font-black text-[#0A2540] leading-tight tracking-tight">
+              <p className="text-xs font-normal text-brand-dark-brown/40 uppercase tracking-widest mb-2">{product.category}</p>
+              <h1 className="text-4xl sm:text-5xl font-semibold text-brand-dark-brown leading-tight tracking-tight">
                 {product.description}
               </h1>
-              <p className="text-sm text-gray-500 mt-2 font-medium">Size: <span className="text-[#0A2540] font-bold">{product.size} cm</span></p>
+              <p className="text-sm text-gray-500 mt-2 font-medium">Size: <span className="text-brand-dark-brown font-normal">{product.size} cm</span></p>
             </div>
 
             {/* Price */}
             <div className="flex items-end gap-3">
-              <p className="text-5xl font-black text-[#0A2540]">₹{product.price}</p>
+              <p className="text-5xl font-semibold text-brand-dark-brown">₹{product.price}</p>
               <p className="text-sm text-gray-400 font-medium mb-2">per piece <span className="text-xs">(+12% GST)</span></p>
             </div>
 
             {/* Description */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">About this box</h2>
-              <p className="text-[#0A2540]/80 text-sm leading-relaxed">
+            <div className="bg-brand-cream rounded-2xl p-5 border border-gray-100">
+              <h2 className="text-xs font-normal uppercase tracking-widest text-gray-400 mb-3">About this box</h2>
+              <p className="text-brand-dark-brown/80 text-sm leading-relaxed">
                 Premium {product.category.toLowerCase()} crafted for jewellery packaging. Includes full-colour screen printing of your logo or branding. 
                 Perfect for <strong>{product.description}</strong> — available in {product.size} cm dimensions. 
                 FSC-certified materials, eco-friendly production. Lead time: 15 working days.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {["FSC Certified", "Screen Print Included", "Premium Finish", "Eco Friendly"].map((tag) => (
-                  <span key={tag} className="text-[10px] font-bold uppercase tracking-wider text-[#0A2540]/60 bg-[#0A2540]/5 px-3 py-1 rounded-full">
+                  <span key={tag} className="text-[10px] font-normal uppercase tracking-wider text-brand-dark-brown/60 bg-brand-dark-brown/5 px-3 py-1 rounded-full">
                     {tag}
                   </span>
                 ))}
@@ -383,8 +382,8 @@ export default function ProductDetailPage() {
             {/* ── Colour selector ── */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Box Colour</h2>
-                <span className="text-xs font-semibold text-[#0A2540] flex items-center gap-1.5">
+                <h2 className="text-xs font-normal uppercase tracking-widest text-gray-400">Box Colour</h2>
+                <span className="text-xs font-semibold text-brand-dark-brown flex items-center gap-1.5">
                   <span
                     className="w-3 h-3 rounded-full border border-black/10 inline-block"
                     style={{ backgroundColor: activeColor }}
@@ -402,7 +401,7 @@ export default function ProductDetailPage() {
                     onClick={() => { setSelectedColor(c.hex); setIsCustom(false); }}
                     className={`w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none ${
                       !isCustom && selectedColor === c.hex
-                        ? "border-[#0A2540] scale-110 shadow-lg"
+                        ? "border-brand-dark-brown scale-110 shadow-lg"
                         : "border-white shadow"
                     }`}
                     style={{ backgroundColor: c.hex }}
@@ -412,8 +411,8 @@ export default function ProductDetailPage() {
 
               {/* Custom hex input */}
               <div className="flex items-center gap-3">
-                <div className={`flex items-center gap-2 border-2 rounded-xl px-3 py-2 flex-1 transition-all ${isCustom ? "border-[#0A2540]" : "border-gray-200"} bg-white`}>
-                  <span className="text-sm font-bold text-gray-400">#</span>
+                <div className={`flex items-center gap-2 border-2 rounded-xl px-3 py-2 flex-1 transition-all ${isCustom ? "border-brand-dark-brown" : "border-gray-200"} bg-brand-cream`}>
+                  <span className="text-sm font-normal text-gray-400">#</span>
                   <input
                     type="text"
                     placeholder="Custom hex e.g. FF6B6B"
@@ -421,7 +420,7 @@ export default function ProductDetailPage() {
                     value={customHex.replace(/^#/, "")}
                     onChange={(e) => handleCustomHexChange(e.target.value)}
                     onFocus={() => setIsCustom(true)}
-                    className="flex-1 text-sm font-semibold text-[#0A2540] bg-transparent outline-none placeholder:text-gray-300"
+                    className="flex-1 text-sm font-semibold text-brand-dark-brown bg-transparent outline-none placeholder:text-gray-300"
                   />
                   {isCustom && customHex && (
                     <span
@@ -437,7 +436,7 @@ export default function ProductDetailPage() {
                     onChange={(e) => handleCustomHexChange(e.target.value)}
                     className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                   />
-                  <div className="w-10 h-10 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center pointer-events-none">
+                  <div className="w-10 h-10 rounded-xl border-2 border-gray-200 bg-brand-cream flex items-center justify-center pointer-events-none">
                     <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                     </svg>
@@ -448,11 +447,11 @@ export default function ProductDetailPage() {
 
             {/* ── Quantity selector ── */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Quantity</h2>
+              <h2 className="text-xs font-normal uppercase tracking-widest text-gray-400 mb-3">Quantity</h2>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center text-xl font-black text-[#0A2540] hover:border-[#0A2540] transition-colors"
+                  className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-brand-cream flex items-center justify-center text-xl font-semibold text-brand-dark-brown hover:border-brand-dark-brown transition-colors"
                 >
                   −
                 </button>
@@ -462,28 +461,28 @@ export default function ProductDetailPage() {
                   step={1}
                   value={qty}
                   onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-                  className="w-28 text-center border-2 border-gray-200 rounded-xl h-11 font-black text-[#0A2540] text-base focus:border-[#0A2540] outline-none transition-colors"
+                  className="w-28 text-center border-2 border-gray-200 rounded-xl h-11 font-semibold text-brand-dark-brown text-base focus:border-brand-dark-brown outline-none transition-colors"
                 />
                 <button
                   onClick={() => setQty((q) => q + 1)}
-                  className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center text-xl font-black text-[#0A2540] hover:border-[#0A2540] transition-colors"
+                  className="w-11 h-11 rounded-xl border-2 border-gray-200 bg-brand-cream flex items-center justify-center text-xl font-semibold text-brand-dark-brown hover:border-brand-dark-brown transition-colors"
                 >
                   +
                 </button>
                 <div className="ml-2 text-sm text-gray-400 font-medium">
-                  = <span className="text-[#0A2540] font-black">₹{totalPrice.toLocaleString("en-IN")}</span>
+                  = <span className="text-brand-dark-brown font-semibold">₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
               </div>
             </div>
 
             {/* ── Order Notes ── */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Order Notes <span className="text-[#0A2540]/40 normal-case font-medium">(Optional)</span></h2>
+              <h2 className="text-xs font-normal uppercase tracking-widest text-gray-400 mb-3">Order Notes <span className="text-brand-dark-brown/40 normal-case font-medium">(Optional)</span></h2>
               <textarea
                 value={orderNotes}
                 onChange={(e) => setOrderNotes(e.target.value)}
                 placeholder="E.g., Custom logo details, preferred colors, specific delivery instructions..."
-                className="w-full bg-white border-2 border-gray-200 text-[#0A2540] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#0A2540] transition-colors resize-none h-24 placeholder:text-gray-400"
+                className="w-full bg-brand-cream border-2 border-gray-200 text-brand-dark-brown rounded-xl px-4 py-3 text-sm outline-none focus:border-brand-dark-brown transition-colors resize-none h-24 placeholder:text-gray-400"
               />
             </div>
 
@@ -496,17 +495,17 @@ export default function ProductDetailPage() {
             {orderState === "success" && (
               <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl flex items-center justify-between">
                 <span>✓ Order placed successfully!</span>
-                <Link href="/orders" className="font-bold underline text-green-800">View Orders →</Link>
+                <Link href="/orders" className="font-normal underline text-green-800">View Orders →</Link>
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setShowCheckout(true)}
                 disabled={orderState === "loading" || orderState === "success"}
-                className={`flex-1 py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+                className={`flex-1 py-4 px-6 rounded-2xl font-semibold text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
                   orderState === "success"
                     ? "bg-green-500 text-white"
-                    : "bg-[#0A2540] text-white hover:bg-[#163a5f] active:scale-[0.98]"
+                    : "bg-brand-dark-brown text-white hover:bg-[#163a5f] active:scale-[0.98]"
                 }`}
               >
                 {orderState === "loading" ? (
@@ -526,9 +525,9 @@ export default function ProductDetailPage() {
                 { icon: "🖨️", label: "Print Included" },
                 { icon: "🚚", label: "15-Day Lead" },
               ].map((m) => (
-                <div key={m.label} className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+                <div key={m.label} className="bg-brand-cream border border-gray-100 rounded-2xl p-3 text-center">
                   <div className="text-xl mb-1">{m.icon}</div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{m.label}</p>
+                  <p className="text-[10px] font-normal uppercase tracking-wider text-gray-500">{m.label}</p>
                 </div>
               ))}
             </div>
@@ -539,8 +538,8 @@ export default function ProductDetailPage() {
         {related.length > 0 && (
           <section className="mt-20">
             <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-black text-[#0A2540] tracking-tight">More in {product.category}</h2>
-              <div className="h-0.5 w-12 bg-[#0A2540] mt-2 rounded-full" />
+              <h2 className="text-2xl sm:text-3xl font-semibold text-brand-dark-brown tracking-tight">More in {product.category}</h2>
+              <div className="h-0.5 w-12 bg-brand-dark-brown mt-2 rounded-full" />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {related.map((p) => (
@@ -549,9 +548,9 @@ export default function ProductDetailPage() {
                     <div className={`relative aspect-square rounded-xl overflow-hidden ${CATEGORY_BG[p.categorySlug]} mb-3`}>
                       <Image src={p.image} alt={p.description} fill className="object-contain p-4 drop-shadow-md" />
                     </div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">{p.size} cm</p>
-                    <h3 className="font-black text-[#0A2540] text-sm leading-tight">{p.description}</h3>
-                    <p className="text-[#0A2540] font-black text-base mt-1">₹{p.price}</p>
+                    <p className="text-[10px] font-normal text-gray-400 uppercase tracking-widest mb-0.5">{p.size} cm</p>
+                    <h3 className="font-semibold text-brand-dark-brown text-sm leading-tight">{p.description}</h3>
+                    <p className="text-brand-dark-brown font-semibold text-base mt-1">₹{p.price}</p>
                   </div>
                 </Link>
               ))}
@@ -560,7 +559,7 @@ export default function ProductDetailPage() {
         )}
       </main>
 
-      <footer className="bg-[#0A2540] text-white/30 py-5 text-center text-xs mt-16">
+      <footer className="bg-brand-dark-brown text-white/30 py-5 text-center text-xs mt-16">
         © {new Date().getFullYear()} PreciousPackaging. All rights reserved.
       </footer>
 
@@ -568,15 +567,15 @@ export default function ProductDetailPage() {
       {showCheckout && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div 
-            className="absolute inset-0 bg-[#0A2540]/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-brand-dark-brown/60 backdrop-blur-sm"
             onClick={() => setShowCheckout(false)}
           />
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+          <div className="relative w-full max-w-lg bg-brand-cream rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
             <div className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-black text-[#0A2540] tracking-tight">Shipping Details</h2>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Final Step</p>
+                  <h2 className="text-2xl font-semibold text-brand-dark-brown tracking-tight">Shipping Details</h2>
+                  <p className="text-xs text-gray-400 font-normal uppercase tracking-widest mt-1">Final Step</p>
                 </div>
                 <button 
                   onClick={() => setShowCheckout(false)}
@@ -590,58 +589,58 @@ export default function ProductDetailPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Recipient Name</label>
+                      <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Recipient Name</label>
                       <input 
                         type="text"
                         placeholder="Full Name"
                         value={checkoutData.name}
                         onChange={(e) => setCheckoutData({...checkoutData, name: e.target.value})}
-                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-brand-dark-brown focus:bg-brand-cream rounded-xl px-4 py-3 text-sm font-normal text-brand-dark-brown outline-none transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Full Address</label>
+                      <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Full Address</label>
                       <textarea 
                         placeholder="Street, Building, Landmark..."
                         value={checkoutData.address}
                         onChange={(e) => setCheckoutData({...checkoutData, address: e.target.value})}
-                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all h-24 resize-none"
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-brand-dark-brown focus:bg-brand-cream rounded-xl px-4 py-3 text-sm font-normal text-brand-dark-brown outline-none transition-all h-24 resize-none"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">City</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5 ml-1">City</label>
                         <input 
                           type="text"
                           placeholder="E.g. Mumbai"
                           value={checkoutData.city}
                           onChange={(e) => setCheckoutData({...checkoutData, city: e.target.value})}
-                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                          className="w-full bg-gray-50 border-2 border-transparent focus:border-brand-dark-brown focus:bg-brand-cream rounded-xl px-4 py-3 text-sm font-normal text-brand-dark-brown outline-none transition-all"
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Pincode</label>
+                        <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5 ml-1">Pincode</label>
                         <input 
                           type="text"
                           placeholder="6 Digits"
                           maxLength={6}
                           value={checkoutData.pincode}
                           onChange={(e) => setCheckoutData({...checkoutData, pincode: e.target.value})}
-                          className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                          className="w-full bg-gray-50 border-2 border-transparent focus:border-brand-dark-brown focus:bg-brand-cream rounded-xl px-4 py-3 text-sm font-normal text-brand-dark-brown outline-none transition-all"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 ml-1">State</label>
+                      <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5 ml-1">State</label>
                       <input 
                         type="text"
                         placeholder="E.g. Maharashtra"
                         value={checkoutData.state}
                         onChange={(e) => setCheckoutData({...checkoutData, state: e.target.value})}
-                        className="w-full bg-gray-50 border-2 border-transparent focus:border-[#0A2540] focus:bg-white rounded-xl px-4 py-3 text-sm font-bold text-[#0A2540] outline-none transition-all"
+                        className="w-full bg-gray-50 border-2 border-transparent focus:border-brand-dark-brown focus:bg-brand-cream rounded-xl px-4 py-3 text-sm font-normal text-brand-dark-brown outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -650,39 +649,39 @@ export default function ProductDetailPage() {
                     <button 
                       onClick={() => setCheckoutStep("payment")}
                       disabled={!checkoutData.name || !checkoutData.address || !checkoutData.city || !checkoutData.pincode}
-                      className="w-full py-4 bg-[#0A2540] text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#163a5f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-xl shadow-[#0A2540]/20"
+                      className="w-full py-4 bg-brand-dark-brown text-white rounded-xl font-semibold uppercase tracking-widest text-sm hover:bg-brand-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-brand-dark-brown/20"
                     >
                       Continue to Payment
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </button>
-                    <p className="text-center text-[#0A2540]/30 text-[10px] font-bold uppercase tracking-widest mt-4">Step 1 of 2: Shipping</p>
+                    <p className="text-center text-brand-dark-brown/30 text-[10px] font-normal uppercase tracking-widest mt-4">Step 1 of 2: Shipping</p>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-6">
                   <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Payable Amount</span>
-                      <span className="text-xl font-black text-[#0A2540]">₹{(totalPrice * 1.12).toLocaleString("en-IN")}</span>
+                      <span className="text-xs font-normal text-gray-400 uppercase tracking-widest">Payable Amount</span>
+                      <span className="text-xl font-semibold text-brand-dark-brown">₹{(totalPrice * 1.12).toLocaleString("en-IN")}</span>
                     </div>
                     <p className="text-[10px] text-gray-400 font-medium">Includes 12% GST</p>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 ml-1">Secure Payment via Razorpay</label>
-                    <div className="bg-white border-2 border-[#0A2540]/10 rounded-2xl p-6 text-center">
+                    <label className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-3 ml-1">Secure Payment via Razorpay</label>
+                    <div className="bg-brand-cream border-2 border-brand-dark-brown/10 rounded-2xl p-6 text-center">
                       <div className="mb-4 flex justify-center gap-4 opacity-50">
                         {/* Placeholder for UPI icons/Logos if you want to show them decorative */}
-                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">UPI</div>
-                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">CARD</div>
-                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-black text-[8px]">NET</div>
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-semibold text-[8px]">UPI</div>
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-semibold text-[8px]">CARD</div>
+                        <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-semibold text-[8px]">NET</div>
                       </div>
-                      <p className="text-xs font-bold text-[#0A2540]/60 mb-6">Support for UPI, Debit/Credit Cards & Netbanking</p>
+                      <p className="text-xs font-normal text-brand-dark-brown/60 mb-6">Support for UPI, Debit/Credit Cards & Netbanking</p>
                       
                       <button
                         onClick={handleRazorpayPayment}
                         disabled={orderState === "loading"}
-                        className="w-full py-4 bg-[#0A2540] text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#163a5f] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#0A2540]/20"
+                        className="w-full py-4 bg-brand-dark-brown text-white rounded-xl font-semibold uppercase tracking-widest text-sm hover:bg-brand-green transition-all flex items-center justify-center gap-3 shadow-md shadow-brand-dark-brown/20"
                       >
                         {orderState === "loading" ? (
                           <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -696,7 +695,7 @@ export default function ProductDetailPage() {
 
                   <div className="pt-2">
                     {orderError && (
-                      <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold animate-in fade-in slide-in-from-top-2">
+                      <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-normal animate-in fade-in slide-in-from-top-2">
                         Error: {orderError}
                       </div>
                     )}
@@ -706,20 +705,20 @@ export default function ProductDetailPage() {
                         <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
                           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        <h3 className="text-lg font-black text-[#0A2540]">Success!</h3>
+                        <h3 className="text-lg font-semibold text-brand-dark-brown">Success!</h3>
                         <p className="text-xs text-gray-500 mt-1">Ordering placing...</p>
                       </div>
                     ) : (
                       <div className="flex flex-col gap-3">
                         <button 
                           onClick={() => setCheckoutStep("shipping")}
-                          className="w-full py-2 text-gray-400 font-bold uppercase tracking-widest text-[10px] hover:text-[#0A2540] transition-colors"
+                          className="w-full py-2 text-gray-400 font-normal uppercase tracking-widest text-[10px] hover:text-brand-dark-brown transition-colors"
                         >
                           Back to Shipping
                         </button>
                       </div>
                     )}
-                    <p className="text-center text-[#0A2540]/30 text-[10px] font-bold uppercase tracking-widest mt-4">Safe & Secure Payments</p>
+                    <p className="text-center text-brand-dark-brown/30 text-[10px] font-normal uppercase tracking-widest mt-4">Safe & Secure Payments</p>
                   </div>
                 </div>
               )}

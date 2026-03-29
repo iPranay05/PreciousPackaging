@@ -12,9 +12,9 @@ const feedImages = [
 
 export default function InstagramFeed() {
   return (
-    <section className="w-full bg-[#fafafa] py-20 overflow-hidden" id="social">
+    <section className="w-full bg-brand-beige py-20 overflow-hidden" id="social">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-        <h2 className="text-2xl md:text-3xl font-black text-black tracking-widest uppercase mb-2">@PreciousPackaging</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold text-black tracking-widest uppercase mb-2">@PreciousPackaging</h2>
         <p className="text-gray-500">Tag us to be featured in our sustainable community.</p>
       </div>
 

@@ -30,7 +30,7 @@ export default function HeroGrid() {
               scale: 1.02,
               transition: { duration: 0.3 }
             }}
-            className={`relative rounded-3xl overflow-hidden shadow-[0_15px_30px_rgba(0,0,0,0.3)] bg-white/20 backdrop-blur-md border border-white/40 group cursor-pointer ${product.gridClass}`}
+            className={`relative rounded-3xl overflow-hidden shadow-[0_15px_30px_rgba(0,0,0,0.3)] bg-brand-cream/20 backdrop-blur-md border border-white/40 group cursor-pointer ${product.gridClass}`}
             style={{ 
                transform: `translateY(${product.yOffset}px)`
             }}
@@ -47,10 +47,10 @@ export default function HeroGrid() {
             />
             
             <div className="absolute bottom-4 left-4 right-4 z-20 flex justify-between items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-               <span className="bg-black/80 backdrop-blur text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full">
+               <span className="bg-black/80 backdrop-blur text-white text-xs font-normal uppercase tracking-widest px-4 py-2 rounded-full">
                  {product.alt}
                </span>
-               <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-bold">
+               <div className="w-8 h-8 rounded-full bg-brand-cream text-black flex items-center justify-center font-normal">
                  +
                </div>
             </div>

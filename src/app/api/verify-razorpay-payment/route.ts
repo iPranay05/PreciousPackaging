@@ -2,10 +2,14 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
-// Admin Supabase client to bypass RLS for secure updates
+// Admin Supabase client – requires the service role key. Never falls back to the public anon key.
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!serviceRoleKey) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set. Cannot create admin client.");
+}
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+  serviceRoleKey
 );
 
 export async function POST(req: Request) {
@@ -51,7 +55,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('Razorpay Verification Error:', error);
     return NextResponse.json(
-      { verified: false, error: 'Failed to verify payment', details: error.message },
+      { verified: false, error: 'Payment verification failed. Please contact support.' },
       { status: 500 }
     );
   }

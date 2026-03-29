@@ -7,10 +7,10 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-[#1a1a1a]" id="how-it-works">
+    <section className="py-24 bg-brand-charcoal" id="how-it-works">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">HOW IT WORKS</h2>
+          <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tighter mb-4">HOW IT WORKS</h2>
           <p className="text-gray-400 font-medium max-w-2xl mx-auto">From concept to delivery in four simple steps.</p>
         </div>
 
@@ -21,10 +21,10 @@ export default function HowItWorks() {
 
           {steps.map((step, i) => (
             <div key={i} className="flex flex-col relative z-10 w-full">
-              <div className="w-16 h-16 rounded-full bg-[#0A2540] text-white flex items-center justify-center font-black text-2xl mb-6 shadow-xl shrink-0">
+              <div className="w-16 h-16 rounded-full bg-brand-dark-brown text-white flex items-center justify-center font-semibold text-2xl mb-6 shadow-xl shrink-0">
                 {step.number}
               </div>
-              <h3 className="text-xl font-bold text-white mb-3 tracking-widest">{step.title}</h3>
+              <h3 className="text-xl font-normal text-white mb-3 tracking-widest">{step.title}</h3>
               <p className="text-gray-400 leading-relaxed pr-4">
                 {step.desc}
               </p>

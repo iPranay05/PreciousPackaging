@@ -4,6 +4,7 @@ import Marquee from "@/components/Marquee";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import Categories from "@/components/Categories";
 import AboutUs from "@/components/AboutUs";
+import WhyChooseUs from "@/components/WhyChooseUs";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import PromoBanner from "@/components/PromoBanner";
@@ -18,6 +19,7 @@ export default function Home() {
       <Header />
       <Hero />
       <Marquee />
+      <WhyChooseUs />
       <FeaturedProducts />
       <Categories />
       <AboutUs />

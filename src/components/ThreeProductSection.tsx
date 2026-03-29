@@ -11,7 +11,7 @@ const products = [
 
 export default function ThreeProductSection() {
   return (
-    <section className="relative w-full py-24 bg-[#FEF4E8] overflow-hidden" id="products">
+    <section className="relative w-full py-24 bg-brand-beige overflow-hidden" id="products">
       {/* Decorative background elements can go here */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8">
         <motion.div
@@ -19,7 +19,7 @@ export default function ThreeProductSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[#534031] tracking-tight mb-2">PREMIUM CARE</h2>
+          <h2 className="text-4xl md:text-5xl font-medium text-[#534031] tracking-tight mb-2">PREMIUM CARE</h2>
           <p className="text-xl text-[#786351] font-medium mb-16">The natural choice for packaging</p>
         </motion.div>
 
@@ -47,10 +47,10 @@ export default function ThreeProductSection() {
                  </div>
               </div>
 
-              <h3 className="text-2xl font-bold tracking-tight text-[#4a3a2d] uppercase">{product.name}</h3>
+              <h3 className="text-2xl font-normal tracking-tight text-[#4a3a2d] uppercase">{product.name}</h3>
               <p className="text-[#8c7867] mt-2 mb-6 font-medium">{product.desc}</p>
               
-              <button className="px-8 py-2 bg-[#f4a38e] hover:bg-[#eb8c73] text-white font-bold tracking-widest text-sm rounded transition-colors shadow-sm">
+              <button className="px-8 py-2 bg-[#f4a38e] hover:bg-[#eb8c73] text-white font-normal tracking-widest text-sm rounded transition-colors shadow-sm">
                 BUY
               </button>
             </motion.div>
