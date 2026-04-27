@@ -36,16 +36,16 @@ export default function WhyChooseUs() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-4 -mx-4 px-4 md:mx-0 md:px-0">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-brand-cream rounded-2xl p-8 shadow-sm border border-brand-brown/10 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center group"
+              className="bg-brand-cream rounded-2xl p-6 md:p-8 shadow-sm border border-brand-brown/10 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center group w-[85vw] max-w-[300px] snap-center flex-shrink-0 md:w-auto md:max-w-none md:min-w-0"
             >
-              <div className="w-16 h-16 rounded-full bg-brand-beige flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-brand-beige flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-normal text-brand-charcoal mb-3">{feature.title}</h3>
+              <h3 className="text-lg md:text-xl font-normal text-brand-charcoal mb-2 md:mb-3">{feature.title}</h3>
               <p className="text-brand-charcoal/70 text-sm leading-relaxed">
                 {feature.description}
               </p>
