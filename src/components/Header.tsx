@@ -14,16 +14,16 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-brand-cream border-b border-[#e5e0d8] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
         {/* Left: Mobile Menu & Logo */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-4">
           <button 
             onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors"
+            className="lg:hidden p-1.5 -ml-1 hover:bg-black/5 rounded-full transition-colors"
           >
-            <Menu size={24} className="text-brand-charcoal" />
+            <Menu size={22} className="text-brand-charcoal" />
           </button>
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply" />
-            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group">
+            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-8 sm:h-12 w-auto object-contain mix-blend-multiply" />
+            <span className="font-serif font-medium tracking-tight text-base sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
               Precious<span className="text-brand-charcoal/70">Packaging</span>
             </span>
           </Link>
@@ -38,18 +38,18 @@ export default function Header() {
         </nav>
 
         {/* Right: Auth + Cart */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {user ? (
             /* Logged-in user dropdown */
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 hover:bg-black/10 transition-colors text-brand-charcoal text-sm font-semibold"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/5 hover:bg-black/10 transition-colors text-brand-charcoal text-xs sm:text-sm font-semibold"
               >
-                <span className="hidden sm:block max-w-[120px] truncate">
-                  {profile?.full_name ?? user.email}
+                <span className="max-w-[80px] sm:max-w-[120px] truncate">
+                  {profile?.full_name?.split(' ')[0] ?? 'User'}
                 </span>
-                <ChevronDown size={14} />
+                <ChevronDown size={12} />
               </button>
 
               {menuOpen && (
@@ -83,15 +83,15 @@ export default function Header() {
             /* Logged-out: Login button */
             <Link
               href="/auth/login"
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-black/10 text-brand-charcoal text-sm font-semibold hover:bg-black/5 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-black/10 text-brand-charcoal text-[11px] sm:text-sm font-semibold hover:bg-black/5 transition-colors"
             >
-              <LogIn size={14} /> Login
+              <LogIn size={13} className="sm:w-[14px]" /> Login
             </Link>
           )}
 
-          <button className="p-2 hover:bg-black/5 rounded-full transition-colors relative">
-            <ShoppingBag size={20} className="text-brand-charcoal" />
-            <span className="absolute top-1 right-1 bg-brand-brown text-white text-[10px] font-normal w-4 h-4 rounded-full flex items-center justify-center">
+          <button className="p-1.5 sm:p-2 hover:bg-black/5 rounded-full transition-colors relative">
+            <ShoppingBag size={18} className="text-brand-charcoal sm:w-[20px]" />
+            <span className="absolute top-0.5 right-0.5 bg-brand-brown text-white text-[9px] font-normal w-3.5 h-3.5 rounded-full flex items-center justify-center">
               0
             </span>
           </button>

@@ -7,11 +7,11 @@ import CircularGallery from "./CircularGallery";
 
 const galleryItems = [
   { image: "/images/category_mailer.png", text: "Eco Mailer" },
-  { image: "/images/category_pouch.png",  text: "Kraft Pouch" },
-  { image: "/images/category_rigid.png",  text: "Luxury Rigid" },
-  { image: "/images/product1.png",        text: "Custom Box" },
+  { image: "/images/category_pouch.png", text: "Kraft Pouch" },
+  { image: "/images/category_rigid.png", text: "Luxury Rigid" },
+  { image: "/images/product1.png", text: "Custom Box" },
   { image: "/images/category_mailer.png", text: "Eco Mailer" },
-  { image: "/images/category_rigid.png",  text: "Luxury Rigid" },
+  { image: "/images/category_rigid.png", text: "Luxury Rigid" },
 ];
 
 export default function FeaturedProducts() {
