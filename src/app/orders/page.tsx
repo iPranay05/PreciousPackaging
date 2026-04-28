@@ -117,7 +117,7 @@ function OrderCard({ order }: { order: Order }) {
                   ₹{order.total_price.toLocaleString("en-IN")}
                 </p>
                 <p className="text-[9px] uppercase tracking-widest font-normal text-brand-charcoal/40 mt-0.5">
-                  incl. 12% GST
+                  incl. 5% GST
                 </p>
               </div>
             </div>

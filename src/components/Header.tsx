@@ -24,7 +24,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group">
             <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-8 sm:h-12 w-auto object-contain mix-blend-multiply" />
             <span className="font-serif font-medium tracking-tight text-base sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
-              Precious<span className="text-brand-charcoal/70">Packaging</span>
+              Precious<span className="text-brand-charcoal/70">Pack</span>
             </span>
           </Link>
         </div>
@@ -32,7 +32,34 @@ export default function Header() {
         {/* Center: Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-8 font-normal text-xs tracking-widest uppercase text-brand-charcoal/80 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Link href="/#featured" className="hover:text-brand-brown transition-opacity">BEST SELLERS</Link>
-          <Link href="/#categories" className="hover:text-brand-brown transition-opacity">CATEGORIES</Link>
+          
+          {/* Categories Dropdown */}
+          <div className="relative group py-4">
+            <button className="flex items-center gap-1 hover:text-brand-brown transition-opacity cursor-default">
+              CATEGORIES <ChevronDown size={10} className="group-hover:rotate-180 transition-transform duration-300" />
+            </button>
+            
+            {/* Dropdown Menu */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-brand-cream border border-[#e5e0d8] rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0 z-50">
+              <div className="py-2">
+                {[
+                  { name: "Top Bottom", slug: "top-bottom" },
+                  { name: "Magnetic", slug: "magnet" },
+                  { name: "Drawer", slug: "drawer" },
+                  { name: "Handle Drawer", slug: "handle-drawer" },
+                ].map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={`/products?category=${cat.slug}`}
+                    className="block px-4 py-2.5 text-[10px] tracking-widest hover:bg-black/5 hover:text-brand-brown transition-colors"
+                  >
+                    {cat.name.toUpperCase()}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <Link href="/products" className="hover:text-brand-brown transition-opacity">PRODUCTS</Link>
           <Link href="/#faq" className="hover:text-brand-brown transition-opacity">FAQ</Link>
         </nav>
@@ -121,9 +148,37 @@ export default function Header() {
               </button>
             </div>
             
-            <nav className="flex-1 overflow-y-auto py-8 px-6 flex flex-col gap-8 font-normal text-sm tracking-widest uppercase text-brand-charcoal">
+            <nav className="flex-1 overflow-y-auto py-8 px-6 flex flex-col gap-6 font-normal text-sm tracking-widest uppercase text-brand-charcoal">
               <Link href="/#featured" onClick={() => setMobileMenuOpen(false)} className="hover:text-brand-brown">BEST SELLERS</Link>
-              <Link href="/#categories" onClick={() => setMobileMenuOpen(false)} className="hover:text-brand-brown">CATEGORIES</Link>
+              
+              <div className="flex flex-col gap-4">
+                <button 
+                  onClick={() => setMenuOpen(!menuOpen)} // Reusing menuOpen state for mobile accordion
+                  className="flex items-center justify-between hover:text-brand-brown text-left"
+                >
+                  CATEGORIES <ChevronDown size={16} className={`transition-transform duration-300 ${menuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {menuOpen && (
+                  <div className="flex flex-col gap-3 pl-4 border-l border-[#e5e0d8] animate-in slide-in-from-top duration-300">
+                    {[
+                      { name: "Top Bottom", slug: "top-bottom" },
+                      { name: "Magnetic", slug: "magnet" },
+                      { name: "Drawer", slug: "drawer" },
+                      { name: "Handle Drawer", slug: "handle-drawer" },
+                    ].map((cat) => (
+                      <Link 
+                        key={cat.slug}
+                        href={`/products?category=${cat.slug}`} 
+                        onClick={() => setMobileMenuOpen(false)} 
+                        className="text-xs hover:text-brand-brown"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="hover:text-brand-brown">PRODUCTS</Link>
               <Link href="/#faq" onClick={() => setMobileMenuOpen(false)} className="hover:text-brand-brown">FAQ</Link>
             </nav>

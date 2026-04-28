@@ -3,10 +3,46 @@
 import { useState } from "react";
 
 const faqs = [
-  { question: "Are your materials entirely eco-friendly?", answer: "Yes, all our primary packaging is made from FSC-certified paper, compostable materials, and printed with soy-based inks. We ensure our supply chain is transparent and sustainable." },
-  { question: "Can I order a sample before committing to a larger run?", answer: "Absolutely. We offer sample kits so you can feel the quality and test the dimensions with your products before placing a full production order." },
-  { question: "What is your typical turnaround time?", answer: "For custom prints, our standard turnaround is 2-3 weeks from proof approval. Blank stock products ship within 48 hours." },
-  { question: "Do you ship internationally?", answer: "Yes, we ship globally using carbon-neutral shipping partners to ensure our ecological footprint remains minimal." }
+  { 
+    question: "What is the MOQ (Minimum Order Quantity)?", 
+    answer: "Our minimum order quantity is 200 pieces per size. Shipping charges are additional. However, orders above 500 pieces qualify for free shipping." 
+  },
+  { 
+    question: "What is the lead time?", 
+    answer: "The standard production lead time is 15 working days after order confirmation and advance payment." 
+  },
+  { 
+    question: "Is printing included in the price?", 
+    answer: "Yes, printing is included in the price. Only the foil block charge is extra, which is a one-time cost." 
+  },
+  { 
+    question: "What are the payment terms?", 
+    answer: "We require 50% advance payment to begin production. The remaining 50% must be paid before dispatch." 
+  },
+  { 
+    question: "Can I customize the box design and size?", 
+    answer: "Yes, we offer fully customized boxes in terms of size, design, color, and finishing." 
+  },
+  { 
+    question: "What materials are used for the boxes?", 
+    answer: "Our boxes are made from high-quality rigid (kappa board) with thickness ranging from 1.5–2 mm, along with premium paper finishes." 
+  },
+  { 
+    question: "Do you provide samples before bulk orders?", 
+    answer: "Yes, sample options are available. Sample charges may apply, and delivery time may vary." 
+  },
+  { 
+    question: "What printing options do you offer?", 
+    answer: "We offer multiple printing options such as: Offset printing, Foil stamping, UV printing, and Embossing/Debossing." 
+  },
+  { 
+    question: "How are the boxes shipped?", 
+    answer: "Boxes are securely packed to ensure safe delivery without damage." 
+  },
+  { 
+    question: "How can I place an order?", 
+    answer: "You can place an order by sharing your requirements such as box size, quantity, and style/design. Our team will assist you through the process." 
+  }
 ];
 
 export default function FAQ() {

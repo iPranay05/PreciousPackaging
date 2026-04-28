@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { supabasePublic } from "@/lib/supabase";
 import { Heart, Search, Eye } from "lucide-react";
@@ -64,6 +64,17 @@ const CATEGORIES = [
         <rect x="10" y="14" width="20" height="10" stroke="currentColor" strokeWidth="1" />
         <path d="M12 24 L 10 30 L 30 30 L 28 24" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
         <circle cx="20" cy="27" r="1.5" fill="currentColor" />
+      </svg>
+    )
+  },
+  { 
+    slug: "handle-drawer", 
+    label: "HANDLE DRAWER",
+    icon: (
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="14" width="20" height="10" stroke="currentColor" strokeWidth="1" />
+        <path d="M12 24 L 10 30 L 30 30 L 28 24" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+        <path d="M17 27 L 23 27" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     )
   },
@@ -171,7 +182,7 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
-export default function ProductsPage() {
+function ProductsContent() {
   const router = useRouter();
   const { user, supabase } = useAuth();
   const [activeCategory, setActiveCategory] = useState("all");
@@ -179,6 +190,16 @@ export default function ProductsPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
+  useEffect(() => {
+    if (categoryParam) {
+      setActiveCategory(categoryParam);
+    } else {
+      setActiveCategory("all");
+    }
+  }, [categoryParam]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -402,7 +423,7 @@ export default function ProductsPage() {
                   <span>Est. Total</span>
                   <span>₹{totalPrice}</span>
                 </div>
-                <p className="text-[10px] uppercase tracking-widest text-brand-brown/70 mt-1 mb-5 font-normal">+12% GST · Shipping at checkout</p>
+                <p className="text-[10px] uppercase tracking-widest text-brand-brown/70 mt-1 mb-5 font-normal">+5% GST · Shipping at checkout</p>
 
                 <div className="bg-[#f5f0eb] rounded-xl p-4 border border-[#e1d5c9]">
                   <p className="text-xs text-brand-charcoal/70 leading-relaxed">
@@ -417,6 +438,18 @@ export default function ProductsPage() {
 
       {/* ─── Footer Placeholder (Replaced by global footer outside page normally) ─── */}
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center">
+        <div className="w-8 h-8 border-[3px] border-brand-brown/20 border-t-[#8b7355] rounded-full animate-spin" />
+      </div>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }
 

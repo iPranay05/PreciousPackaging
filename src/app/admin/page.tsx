@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { supabasePublic } from "@/lib/supabase";
-import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight, Edit2, Image as ImageIcon, X, Upload } from "lucide-react";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
@@ -16,6 +16,7 @@ interface Product {
   description: string;
   price: number;
   image: string;
+  images: string[];
   size: string;
   badge?: string;
   created_at: string;
@@ -62,7 +63,10 @@ export default function AdminDashboard() {
   const [fetching, setFetching] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showEditProduct, setShowEditProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [uploading, setUploading] = useState(false);
   
   const [newProduct, setNewProduct] = useState({
     id: "",
@@ -71,9 +75,12 @@ export default function AdminDashboard() {
     description: "",
     price: "",
     image: "/images/placeholder.webp",
+    images: [] as string[],
     size: "2.5x3x1.5",
     badge: ""
   });
+
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   useEffect(() => {
     if (!authLoading && (!user || !profile)) return;
@@ -126,6 +133,53 @@ export default function AdminDashboard() {
     setUpdating(null);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isGallery: boolean = false, isEdit: boolean = false) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      if (isEdit && editingProduct) {
+        if (isGallery) {
+          setEditingProduct({
+            ...editingProduct,
+            images: [...(editingProduct.images || []), publicUrl]
+          });
+        } else {
+          setEditingProduct({ ...editingProduct, image: publicUrl });
+        }
+      } else {
+        if (isGallery) {
+          setNewProduct({
+            ...newProduct,
+            images: [...newProduct.images, publicUrl]
+          });
+        } else {
+          setNewProduct({ ...newProduct, image: publicUrl });
+        }
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const addProduct = async () => {
     if (!newProduct.id || !newProduct.description || !newProduct.price) return;
     setUpdating("new");
@@ -143,9 +197,35 @@ export default function AdminDashboard() {
         description: "",
         price: "",
         image: "/images/placeholder.webp",
+        images: [],
         size: "2.5x3x1.5",
         badge: ""
       });
+    }
+    setUpdating(null);
+  };
+
+  const updateProduct = async () => {
+    if (!editingProduct) return;
+    setUpdating(editingProduct.id);
+    const { error } = await supabase
+      .from("products")
+      .update({
+        category: editingProduct.category,
+        categorySlug: editingProduct.categorySlug,
+        description: editingProduct.description,
+        price: editingProduct.price,
+        image: editingProduct.image,
+        images: editingProduct.images,
+        size: editingProduct.size,
+        badge: editingProduct.badge
+      })
+      .eq("id", editingProduct.id);
+
+    if (!error) {
+      setShowEditProduct(false);
+      setEditingProduct(null);
+      fetchProducts();
     }
     setUpdating(null);
   };
@@ -512,14 +592,26 @@ export default function AdminDashboard() {
                           {new Date(product.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
                         </td>
                         <td className="px-6 py-4 align-middle text-right">
-                          <button 
-                            onClick={() => deleteProduct(product.id)}
-                            disabled={updating === product.id}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                            title="Delete Product"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            <button 
+                              onClick={() => {
+                                setEditingProduct({...product});
+                                setShowEditProduct(true);
+                              }}
+                              className="p-2 text-gray-400 hover:text-brand-brown hover:bg-[#f5f0eb] rounded-xl transition-all"
+                              title="Edit Product"
+                            >
+                              <Edit2 size={18} />
+                            </button>
+                            <button 
+                              onClick={() => deleteProduct(product.id)}
+                              disabled={updating === product.id}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                              title="Delete Product"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -543,11 +635,11 @@ export default function AdminDashboard() {
                 <p className="text-[10px] text-brand-brown font-normal uppercase tracking-widest mt-1">Expand your catalog</p>
               </div>
               <button onClick={() => setShowAddProduct(false)} className="w-10 h-10 bg-[#f5f0eb] rounded-full hover:bg-[#e1d5c9] flex items-center justify-center transition-colors border border-[#e1d5c9]/60 shadow-sm group">
-                <Plus size={20} className="text-brand-brown rotate-45 group-hover:text-brand-charcoal transition-colors" />
+                <X size={20} className="text-brand-brown group-hover:text-brand-charcoal transition-colors" />
               </button>
             </div>
 
-            <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar bg-brand-cream">
+            <div className="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar bg-brand-cream">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                  <div>
                     <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Product ID (Unique)</label>
@@ -616,18 +708,71 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Image URL</label>
-                  <input 
-                    type="text" placeholder="https://example.com/image.jpg" 
-                    value={newProduct.image} onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
-                    className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl px-4 py-3.5 text-sm font-medium text-brand-charcoal outline-none transition-all"
-                  />
-                  {/* Image Preview */}
-                  {newProduct.image && (
-                    <div className="mt-3 w-16 h-16 rounded-xl border border-[#e1d5c9] overflow-hidden bg-[#f5f0eb]">
-                       <img src={newProduct.image} alt="Preview" className="w-full h-full object-contain p-1" onError={(e) => e.currentTarget.style.display = 'none'} />
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Main Image</label>
+                  <div className="flex gap-3">
+                    <input 
+                      type="text" placeholder="https://example.com/image.jpg" 
+                      value={newProduct.image} onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                      className="flex-1 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl px-4 py-3.5 text-sm font-medium text-brand-charcoal outline-none transition-all"
+                    />
+                    <label className="bg-[#f5f0eb] p-3.5 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all cursor-pointer flex items-center gap-2">
+                      <Upload size={18} />
+                      <span className="text-[10px] font-normal uppercase tracking-widest hidden sm:inline">Upload</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, false, false)} disabled={uploading} />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Additional Images Section */}
+                <div className="sm:col-span-2 space-y-4 pt-2">
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Additional Images Gallery</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="Paste additional image URL here..." 
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      className="flex-1 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown rounded-xl px-4 py-3 text-sm outline-none"
+                    />
+                    <label className="bg-[#f5f0eb] p-3 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all cursor-pointer flex items-center justify-center w-12 h-12">
+                      <Upload size={20} />
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, true, false)} disabled={uploading} />
+                    </label>
+                    <button 
+                      onClick={() => {
+                        if (newImageUrl) {
+                          setNewProduct({...newProduct, images: [...newProduct.images, newImageUrl]});
+                          setNewImageUrl("");
+                        }
+                      }}
+                      className="bg-[#f5f0eb] p-3 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all flex items-center justify-center w-12 h-12"
+                    >
+                      <Plus size={20} />
+                    </button>
+                  </div>
+
+                  {/* Thumbnails Grid */}
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 mt-4">
+                    {/* Main Image Preview */}
+                    <div className="relative aspect-square rounded-lg border-2 border-brand-brown/30 overflow-hidden bg-[#f5f0eb] group">
+                      <img src={newProduct.image} alt="Main" className="w-full h-full object-contain p-1" />
+                      <div className="absolute inset-0 bg-brand-brown/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[8px] text-white uppercase tracking-tighter">Main</span>
+                      </div>
                     </div>
-                  )}
+                    {/* Gallery Images */}
+                    {newProduct.images.map((img, idx) => (
+                      <div key={idx} className="relative aspect-square rounded-lg border border-[#e1d5c9] overflow-hidden bg-[#f5f0eb] group">
+                        <img src={img} alt="" className="w-full h-full object-contain p-1" />
+                        <button 
+                          onClick={() => setNewProduct({...newProduct, images: newProduct.images.filter((_, i) => i !== idx)})}
+                          className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
@@ -649,6 +794,173 @@ export default function AdminDashboard() {
               >
                 {updating === "new" ? <div className="w-4 h-4 border-2 border-[#e1d5c9]/40 border-t-[#e1d5c9] rounded-full animate-spin" /> : <Plus size={16} />} 
                 {updating === "new" ? "Creating Product..." : "Launch Product"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Beautiful Edit Product Modal ── */}
+      {showEditProduct && editingProduct && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={() => { setShowEditProduct(false); setEditingProduct(null); }} />
+          <div className="relative w-full max-w-2xl bg-brand-cream rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-[#e1d5c9]">
+            {/* Header */}
+            <div className="px-8 py-6 border-b border-[#e1d5c9]/60 flex items-center justify-between bg-brand-cream">
+              <div>
+                <h2 className="text-2xl font-serif font-medium text-brand-charcoal tracking-wide">Edit Product</h2>
+                <p className="text-[10px] text-brand-brown font-normal uppercase tracking-widest mt-1">Product ID: {editingProduct.id}</p>
+              </div>
+              <button onClick={() => { setShowEditProduct(false); setEditingProduct(null); }} className="w-10 h-10 bg-[#f5f0eb] rounded-full hover:bg-[#e1d5c9] flex items-center justify-center transition-colors border border-[#e1d5c9]/60 shadow-sm group">
+                <X size={20} className="text-brand-brown group-hover:text-brand-charcoal transition-colors" />
+              </button>
+            </div>
+
+            <div className="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar bg-brand-cream">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                 <div>
+                    <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Category</label>
+                    <div className="relative">
+                      <select 
+                        value={editingProduct.categorySlug} 
+                        onChange={(e) => {
+                          const slug = e.target.value;
+                          const label = slug === "top-bottom" ? "Top-bottom box" : slug === "magnet" ? "Magnet box" : "Drawer box";
+                          setEditingProduct({...editingProduct, categorySlug: slug, category: label});
+                        }}
+                        className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-4 pr-10 py-3.5 text-sm font-normal text-brand-charcoal outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="top-bottom">Top-bottom box</option>
+                        <option value="magnet">Magnet box</option>
+                        <option value="drawer">Drawer box</option>
+                      </select>
+                      <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-brown pointer-events-none" />
+                    </div>
+                 </div>
+
+                 <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Product Title</label>
+                  <div className="relative">
+                    <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-brown" size={16} />
+                    <input 
+                      type="text" placeholder="e.g. Premium Rigid Box for Jewellery" 
+                      value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})}
+                      className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-12 pr-4 py-3.5 text-sm font-normal text-brand-charcoal outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Price (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-brown font-serif font-normal">₹</span>
+                    <input 
+                      type="number" placeholder="50" 
+                      value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})}
+                      className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-10 pr-4 py-3.5 text-sm font-serif font-medium text-brand-charcoal outline-none transition-all"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Dimensions / Size</label>
+                  <div className="relative">
+                    <Box className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-brown" size={16} />
+                    <input 
+                      type="text" placeholder="2.5x3x1.5" 
+                      value={editingProduct.size} onChange={(e) => setEditingProduct({...editingProduct, size: e.target.value})}
+                      className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-12 pr-4 py-3.5 text-sm font-medium text-brand-charcoal outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Main Image</label>
+                  <div className="flex gap-3">
+                    <input 
+                      type="text" placeholder="https://example.com/image.jpg" 
+                      value={editingProduct.image} onChange={(e) => setEditingProduct({...editingProduct, image: e.target.value})}
+                      className="flex-1 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl px-4 py-3.5 text-sm font-medium text-brand-charcoal outline-none transition-all"
+                    />
+                    <label className="bg-[#f5f0eb] p-3.5 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all cursor-pointer flex items-center gap-2">
+                      <Upload size={18} />
+                      <span className="text-[10px] font-normal uppercase tracking-widest hidden sm:inline">Upload</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, false, true)} disabled={uploading} />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Additional Images Section */}
+                <div className="sm:col-span-2 space-y-4 pt-2">
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Additional Images Gallery</label>
+                  
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="Paste additional image URL here..." 
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      className="flex-1 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown rounded-xl px-4 py-3 text-sm outline-none"
+                    />
+                    <label className="bg-[#f5f0eb] p-3 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all cursor-pointer flex items-center justify-center w-12 h-12">
+                      <Upload size={20} />
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, true, true)} disabled={uploading} />
+                    </label>
+                    <button 
+                      onClick={() => {
+                        if (newImageUrl) {
+                          setEditingProduct({...editingProduct, images: [...(editingProduct.images || []), newImageUrl]});
+                          setNewImageUrl("");
+                        }
+                      }}
+                      className="bg-[#f5f0eb] p-3 rounded-xl border border-[#e1d5c9] hover:bg-brand-brown hover:text-brand-cream transition-all flex items-center justify-center w-12 h-12"
+                    >
+                      <Plus size={20} />
+                    </button>
+                  </div>
+
+                  {/* Thumbnails Grid */}
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 mt-4">
+                    {/* Main Image Preview */}
+                    <div className="relative aspect-square rounded-lg border-2 border-brand-brown/30 overflow-hidden bg-[#f5f0eb] group">
+                      <img src={editingProduct.image} alt="Main" className="w-full h-full object-contain p-1" />
+                      <div className="absolute inset-0 bg-brand-brown/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[8px] text-white uppercase tracking-tighter">Main</span>
+                      </div>
+                    </div>
+                    {/* Gallery Images */}
+                    {(editingProduct.images || []).map((img, idx) => (
+                      <div key={idx} className="relative aspect-square rounded-lg border border-[#e1d5c9] overflow-hidden bg-[#f5f0eb] group">
+                        <img src={img} alt="" className="w-full h-full object-contain p-1" />
+                        <button 
+                          onClick={() => setEditingProduct({...editingProduct, images: editingProduct.images?.filter((_, i) => i !== idx) || []})}
+                          className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Badge / Tag (Optional)</label>
+                  <input 
+                    type="text" placeholder="e.g. Best Seller, New Arrival" 
+                    value={editingProduct.badge || ""} onChange={(e) => setEditingProduct({...editingProduct, badge: e.target.value})}
+                    className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl px-4 py-3.5 text-sm font-medium text-brand-charcoal outline-none transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-[#e1d5c9]/60 bg-brand-cream">
+              <button 
+                onClick={updateProduct}
+                disabled={!editingProduct.description || !editingProduct.price || updating === editingProduct.id}
+                className="w-full py-4 bg-brand-charcoal text-brand-cream rounded-xl font-normal uppercase tracking-widest text-[11px] hover:bg-[#3a352f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+              >
+                {updating === editingProduct.id ? <div className="w-4 h-4 border-2 border-[#e1d5c9]/40 border-t-[#e1d5c9] rounded-full animate-spin" /> : <RefreshCw size={16} />} 
+                {updating === editingProduct.id ? "Updating Product..." : "Save Changes"}
               </button>
             </div>
           </div>

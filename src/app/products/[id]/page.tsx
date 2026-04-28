@@ -17,6 +17,7 @@ type Product = {
   description: string;
   price: number;
   image: string;
+  images?: string[];
   badge?: string;
 };
 
@@ -50,6 +51,7 @@ export default function ProductDetailPage() {
   const [product, setProduct]             = useState<Product | null>(null);
   const [related, setRelated]             = useState<Product[]>([]);
   const [loading, setLoading]             = useState(true);
+  const [activeImage, setActiveImage]     = useState<string>("");
 
   const [selectedColor, setSelectedColor] = useState<string>(PRESET_COLORS[0].hex);
   const [customHex, setCustomHex]         = useState<string>("");
@@ -58,6 +60,7 @@ export default function ProductDetailPage() {
   const [orderState, setOrderState]       = useState<"idle" | "loading" | "success" | "error">("idle");
   const [orderError, setOrderError]       = useState("");
   const [orderNotes, setOrderNotes]       = useState("");
+  const [paperType, setPaperType]         = useState<"standard" | "premium">("standard");
 
   useEffect(() => {
     async function fetchProductData() {
@@ -70,6 +73,7 @@ export default function ProductDetailPage() {
         
         if (prodData) {
           setProduct(prodData);
+          setActiveImage(prodData.image);
           
           // Fetch related products
           const { data: relData } = await supabasePublic
@@ -97,7 +101,9 @@ export default function ProductDetailPage() {
   const activeColorLabel = isCustom
     ? `Custom (${activeColor})`
     : PRESET_COLORS.find((c) => c.hex === selectedColor)?.label ?? selectedColor;
-  const totalPrice = product ? product.price * qty : 0;
+  
+  const unitPrice = (product?.price ?? 0) + (paperType === "premium" ? 20 : 0);
+  const totalPrice = unitPrice * qty;
 
   // Checkout Details State
   const [showCheckout, setShowCheckout] = useState(false);
@@ -144,6 +150,12 @@ export default function ProductDetailPage() {
     if (!user) { router.push("/auth/login"); return; }
     if (!product) return;
     
+    // Check custom color MOQ
+    if (isCustom && qty < 1000) {
+      setOrderError("Minimum order quantity for custom colors is 1000 units.");
+      return;
+    }
+
     // Check if we have checkout data
     if (!checkoutData.address || !checkoutData.city || !checkoutData.pincode) {
       setShowCheckout(true);
@@ -162,6 +174,7 @@ export default function ProductDetailPage() {
           quantity: qty,
           color: selectedColor,
           size: product.size,
+          paper_type: paperType,
           notes: orderNotes,
           checkoutData,
           user_id: user.id,
@@ -312,10 +325,10 @@ export default function ProductDetailPage() {
               }
             >
               <Image
-                src={product.image}
+                src={activeImage || product.image}
                 alt={product.description}
                 fill
-                className="object-contain p-12 drop-shadow-2xl"
+                className="object-contain p-12 drop-shadow-2xl transition-all duration-500"
                 priority
               />
               {product.badge && (
@@ -325,19 +338,19 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {/* Thumbnail strip  — same image repeated at different opacities to simulate variants */}
-            <div className="grid grid-cols-4 gap-3">
-              {[1, 0.65, 0.45, 0.3].map((op, i) => (
+            {/* Thumbnail strip */}
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {[product.image, ...(product.images || [])].map((img, i) => (
                 <div
                   key={i}
-                  className={`relative aspect-square rounded-2xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} cursor-pointer border-2 transition-all duration-200 ${i === 0 ? "border-brand-dark-brown" : "border-transparent hover:border-brand-dark-brown/40"}`}
+                  onClick={() => setActiveImage(img)}
+                  className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} cursor-pointer border-2 transition-all duration-200 ${activeImage === img ? "border-brand-dark-brown scale-95 shadow-inner" : "border-transparent hover:border-brand-dark-brown/40"}`}
                 >
                   <Image
-                    src={product.image}
+                    src={img}
                     alt={`View ${i + 1}`}
                     fill
-                    className="object-contain p-4 drop-shadow-md"
-                    style={{ opacity: op }}
+                    className="object-contain p-2 drop-shadow-md"
                   />
                 </div>
               ))}
@@ -358,8 +371,8 @@ export default function ProductDetailPage() {
 
             {/* Price */}
             <div className="flex items-end gap-3">
-              <p className="text-5xl font-semibold text-brand-dark-brown">₹{product.price}</p>
-              <p className="text-sm text-gray-400 font-medium mb-2">per piece <span className="text-xs">(+12% GST)</span></p>
+              <p className="text-5xl font-semibold text-brand-dark-brown">₹{unitPrice}</p>
+              <p className="text-sm text-gray-400 font-medium mb-2">per piece <span className="text-xs">(+5% GST)</span></p>
             </div>
 
             {/* Description */}
@@ -376,6 +389,38 @@ export default function ProductDetailPage() {
                     {tag}
                   </span>
                 ))}
+              </div>
+            </div>
+
+            {/* ── Paper Type selector ── */}
+            <div>
+              <h2 className="text-xs font-normal uppercase tracking-widest text-gray-400 mb-3">Paper Quality</h2>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setPaperType("standard")}
+                  className={`flex-1 p-4 rounded-2xl border-2 transition-all text-left ${
+                    paperType === "standard" 
+                      ? "border-brand-dark-brown bg-brand-dark-brown/5" 
+                      : "border-gray-100 hover:border-gray-200"
+                  }`}
+                >
+                  <p className="text-xs font-semibold text-brand-dark-brown uppercase tracking-wider">Standard Paper</p>
+                  <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-tight">Included in base price</p>
+                </button>
+                <button
+                  onClick={() => setPaperType("premium")}
+                  className={`flex-1 p-4 rounded-2xl border-2 transition-all text-left ${
+                    paperType === "premium" 
+                      ? "border-brand-dark-brown bg-brand-dark-brown/5" 
+                      : "border-gray-100 hover:border-gray-200"
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <p className="text-xs font-semibold text-brand-dark-brown uppercase tracking-wider">Premium Paper</p>
+                    <span className="text-[9px] bg-brand-brown text-white px-1.5 py-0.5 rounded-sm">+₹20</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-tight">Luxurious texture & finish</p>
+                </button>
               </div>
             </div>
 
@@ -436,13 +481,16 @@ export default function ProductDetailPage() {
                     onChange={(e) => handleCustomHexChange(e.target.value)}
                     className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                   />
-                  <div className="w-10 h-10 rounded-xl border-2 border-gray-200 bg-brand-cream flex items-center justify-center pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                    </svg>
-                  </div>
                 </div>
               </div>
+              {isCustom && (
+                <div className="mt-3 flex items-center gap-2 bg-amber-50 border border-amber-100 p-3 rounded-xl">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-800">
+                    Custom Color MOQ: <span className="text-brand-dark-brown">1000 Units</span>
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* ── Quantity selector ── */}
@@ -498,9 +546,23 @@ export default function ProductDetailPage() {
                 <Link href="/orders" className="font-normal underline text-green-800">View Orders →</Link>
               </div>
             )}
+            {orderError && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-medium animate-in fade-in slide-in-from-top-2 flex items-center gap-2">
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {orderError}
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => setShowCheckout(true)}
+                onClick={() => {
+                  if (isCustom && qty < 1000) {
+                    setOrderError("Minimum order quantity for custom colors is 1000 units.");
+                    // Scroll to error if needed or just let it show
+                  } else {
+                    setOrderError("");
+                    setShowCheckout(true);
+                  }
+                }}
                 disabled={orderState === "loading" || orderState === "success"}
                 className={`flex-1 py-4 px-6 rounded-2xl font-semibold text-sm uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
                   orderState === "success"
@@ -662,9 +724,12 @@ export default function ProductDetailPage() {
                   <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-xs font-normal text-gray-400 uppercase tracking-widest">Payable Amount</span>
-                      <span className="text-xl font-semibold text-brand-dark-brown">₹{(totalPrice * 1.12).toLocaleString("en-IN")}</span>
+                      <span className="text-xl font-semibold text-brand-dark-brown">₹{(totalPrice * 1.05).toLocaleString("en-IN")}</span>
                     </div>
-                    <p className="text-[10px] text-gray-400 font-medium">Includes 12% GST</p>
+                    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-tight">
+                      {paperType === "premium" ? "Premium Paper (+₹20) · " : ""}
+                      Includes 5% GST
+                    </p>
                   </div>
 
                   <div>

@@ -6,139 +6,128 @@ import TextType from "./TextType";
 
 export default function Hero() {
   return (
-    <section className="w-full min-h-[calc(100vh-64px)] pt-20 pb-4 px-4 bg-brand-cream">
-      {/* 
-        A unique bento grid that takes up mostly the full screen. 
-        Instead of stacked text and images, text, images, and stats share the hero real estate.
-      */}
-      <div className="max-w-7xl mx-auto h-[calc(100dvh-100px)] lg:h-[calc(100vh-120px)] grid grid-cols-2 md:grid-cols-12 grid-rows-6 gap-2 sm:gap-4">
-
-        {/* Main Text & Atmosphere Block */}
+    <section className="w-full min-h-[calc(100vh-64px)] pt-20 pb-12 px-4 bg-brand-cream relative overflow-hidden">
+      {/* Background Decor - Subtle shapes for a "plain" but premium look */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-beige/20 -skew-x-12 translate-x-1/4 pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 min-h-[calc(100vh-160px)]">
+        
+        {/* Left: Text Content */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="col-span-2 row-span-3 md:col-span-8 md:row-span-6 rounded-2xl md:rounded-3xl bg-brand-beige p-5 lg:p-12 flex flex-col justify-end relative overflow-hidden group"
+          className="flex-1 text-left z-10"
         >
-          {/* Subtle background texture/image inside the main block */}
-          <div className="absolute inset-0 opacity-5 mix-blend-multiply transition-transform duration-1000 group-hover:scale-105 pointer-events-none">
-            <Image
-              src="/images/heroImage.png"
-              alt="Texture"
-              fill
-              className="object-cover"
-              priority
-            />
+          <div className="inline-block px-3 py-1 rounded-full bg-brand-brown/5 border border-brand-brown/10 text-brand-brown text-[10px] tracking-[0.2em] uppercase mb-6 font-medium">
+            Eco-Luxury Packaging
           </div>
 
-          <div className="relative z-10 w-full mt-auto">
-            <h1 className="text-[1.75rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] font-semibold text-brand-dark-brown leading-[1.05] sm:leading-[1] tracking-tighter uppercase mb-3 sm:mb-6 break-words">
-              Sustainable <br className="hidden sm:block" />
-              <span className="text-brand-brown drop-shadow-sm font-serif italic text-[2rem] sm:text-[4rem] lg:text-[5rem] xl:text-[6.5rem] block sm:inline mt-0.5 sm:mt-0">
-                <TextType
-                  text={["Packaging.", "Branding.", "Excellence."]}
-                  typingSpeed={60}
-                  deletingSpeed={35}
-                  pauseDuration={2200}
-                  loop={true}
-                  showCursor={true}
-                  cursorCharacter=""
-                  cursorClassName="text-brand-brown/50"
-                  className="font-serif italic"
-                />
-              </span>
-            </h1>
-            <p className="text-brand-dark-brown font-medium tracking-widest uppercase mb-4 sm:mb-8 max-w-md text-[10px] sm:text-base leading-relaxed opacity-90">
-              Elevate your brand with 100% eco-friendly, premium materials delivered directly to you.
-            </p>
-            <div className="flex flex-row sm:flex-row gap-2 sm:gap-4 w-full">
-              <button className="flex-1 bg-brand-brown text-brand-cream px-2 sm:px-8 py-3 sm:py-4 font-medium uppercase tracking-widest text-[10px] sm:text-sm hover:bg-brand-dark-brown transition-colors rounded-xl shadow-md flex items-center justify-center gap-1.5 sm:gap-2">
-                🌱 Get Quote
-              </button>
-              <button className="flex-1 bg-transparent border-2 border-brand-brown text-brand-dark-brown px-2 sm:px-8 py-3 sm:py-4 font-medium uppercase tracking-widest text-[10px] sm:text-sm hover:bg-brand-brown/10 transition-colors rounded-xl shadow-sm flex items-center justify-center gap-1.5 sm:gap-2">
-                📦 View Products
-              </button>
+          <h1 className="text-[2.5rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] font-semibold text-brand-dark-brown leading-[1.05] tracking-tighter uppercase mb-6">
+            Sustainable <br />
+            <span className="text-brand-brown font-serif italic">
+              <TextType
+                text={["Packaging.", "Branding.", "Excellence."]}
+                typingSpeed={60}
+                deletingSpeed={35}
+                pauseDuration={2200}
+                loop={true}
+                showCursor={true}
+                cursorCharacter=""
+                cursorClassName="text-brand-brown/50"
+                className="font-serif italic"
+              />
+            </span>
+          </h1>
+
+          <p className="text-brand-dark-brown/70 font-medium tracking-wide mb-10 max-w-lg text-sm sm:text-lg leading-relaxed">
+            Elevate your brand with 100% eco-friendly, premium materials. 
+            Tailored solutions for modern brands that value sustainability and style.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <button className="bg-brand-brown text-brand-cream px-10 py-4 font-semibold uppercase tracking-widest text-xs hover:bg-brand-dark-brown transition-all rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
+              Get Quote
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </button>
+            <button className="bg-transparent border border-brand-brown/20 text-brand-dark-brown px-10 py-4 font-semibold uppercase tracking-widest text-xs hover:bg-brand-brown hover:text-brand-cream transition-all rounded-full flex items-center justify-center">
+              View Products
+            </button>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="mt-12 flex items-center gap-8 border-t border-brand-brown/10 pt-8">
+            <div>
+              <div className="text-2xl font-semibold text-brand-dark-brown">100%</div>
+              <div className="text-[10px] text-brand-brown/60 uppercase tracking-widest">FSC Certified</div>
+            </div>
+            <div className="w-px h-8 bg-brand-brown/10" />
+            <div>
+              <div className="text-2xl font-semibold text-brand-dark-brown">500+</div>
+              <div className="text-[10px] text-brand-brown/60 uppercase tracking-widest">Happy Brands</div>
             </div>
           </div>
         </motion.div>
 
-        {/* Top Right Block - Product Spotlight 1 */}
+        {/* Right: Visual Placeholder for Animated Image */}
         <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="col-span-2 row-span-2 md:col-span-4 md:row-span-3 rounded-2xl md:rounded-3xl bg-brand-cream border border-brand-brown/10 relative overflow-hidden group flex items-center justify-center p-4 sm:p-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          className="flex-1 w-full max-w-2xl relative aspect-[4/5] lg:aspect-square group"
         >
-          <video 
-            src="/images/precious_pack_-20260307-0001.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-          />
-          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 font-normal text-[10px] sm:text-xs tracking-widest uppercase bg-brand-cream/90 backdrop-blur text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-sm">
-            Premium Rigid
-          </div>
-        </motion.div>
-
-        {/* Bottom Right Split 1 - Product Spotlight 2 */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="col-span-1 row-span-1 md:col-span-2 md:row-span-3 rounded-2xl md:rounded-3xl bg-brand-beige border border-brand-brown/10 relative overflow-hidden group"
-        >
-          <video 
-            src="/images/precious_pack_-20260307-0002.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-          />
-          <div className="absolute top-4 left-4 sm:top-4 sm:left-4 font-normal text-[10px] sm:text-xs tracking-widest text-brand-dark-brown bg-brand-cream/80 backdrop-blur px-2 py-1 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none rounded-sm">01 / POUCH</div>
-        </motion.div>
-
-        {/* Bottom Right Split 2 - Stats / Trust Signal */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="col-span-1 row-span-1 md:col-span-2 md:row-span-3 rounded-2xl md:rounded-3xl bg-brand-dark-brown p-3 sm:p-6 flex flex-col justify-between text-white relative overflow-hidden"
-        >
-          <video 
-            src="/images/precious_pack_-20260307-0003.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-50 transition-opacity duration-700 group-hover:opacity-70" 
-          />
-          <div className="absolute inset-0 bg-brand-dark-brown/40 z-0"></div>
-          
-          <div className="relative z-10 w-6 h-6 sm:w-12 sm:h-12 rounded-full bg-brand-cream flex items-center justify-center text-brand-dark-brown shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 sm:w-6 sm:h-6">
-              <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="relative z-10 mt-1 sm:mt-8">
-            <div className="text-xl sm:text-4xl font-semibold mb-0 sm:mb-1 text-white leading-none">100%</div>
-            <div className="text-[8px] sm:text-xs text-white/80 font-normal uppercase tracking-widest leading-relaxed">
-              FSC Certified
+          {/* Main Visual Container */}
+          <div className="absolute inset-0 bg-brand-beige rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl shadow-brand-brown/5 border border-brand-brown/5">
+            {/* Subtle Texture for "Plain" background */}
+            <div className="absolute inset-0 opacity-10 mix-blend-multiply">
+              <Image
+                src="/images/heroImage.png"
+                alt="Texture"
+                fill
+                className="object-cover"
+              />
             </div>
-          </div>
+            
+            {/* Placeholder Content - Until the animated image arrives */}
+            <div className="absolute inset-0 flex items-center justify-center p-12">
+               {/* 
+                  This is the spot where the animated image will be added.
+                  For now, we use a clean, premium visual arrangement.
+               */}
+               <div className="relative w-full h-full flex items-center justify-center">
+                  <div className="w-3/4 h-3/4 bg-brand-cream rounded-2xl rotate-3 shadow-lg absolute transform group-hover:rotate-6 transition-transform duration-700" />
+                  <div className="w-3/4 h-3/4 bg-white/40 backdrop-blur-sm rounded-2xl -rotate-2 border border-white/20 shadow-xl relative z-10 flex flex-col items-center justify-center gap-4 text-center p-8">
+                    <div className="w-16 h-16 rounded-full bg-brand-brown/10 flex items-center justify-center text-brand-brown mb-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-8 h-8">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                       </svg>
+                    </div>
+                    <h3 className="font-serif italic text-2xl text-brand-dark-brown">Bespoke Design</h3>
+                    <p className="text-xs text-brand-brown/60 uppercase tracking-widest leading-relaxed">
+                      Future Home of <br /> Animated Brand Story
+                    </p>
+                  </div>
+               </div>
+            </div>
 
-          <div className="absolute -bottom-10 -right-10 opacity-10">
-            <svg width="150" height="150" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            {/* Floaties - subtle decorative elements */}
+            <div className="absolute top-12 right-12 w-24 h-24 bg-brand-brown/5 rounded-full blur-2xl animate-pulse" />
+            <div className="absolute bottom-12 left-12 w-32 h-32 bg-brand-brown/10 rounded-full blur-3xl animate-pulse delay-1000" />
           </div>
         </motion.div>
 
       </div>
+
+      {/* Scroll Indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
+      >
+        <div className="w-px h-12 bg-gradient-to-b from-brand-brown/40 to-transparent" />
+        <span className="text-[10px] text-brand-brown/40 uppercase tracking-[0.3em] vertical-text">Scroll</span>
+      </motion.div>
     </section>
   );
 }

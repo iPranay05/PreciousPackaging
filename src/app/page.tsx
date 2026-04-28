@@ -20,9 +20,9 @@ export default function Home() {
       <Hero />
       <Marquee />
       <WhyChooseUs />
-      <FeaturedProducts />
-      <Categories />
-      <AboutUs />
+      {/* <FeaturedProducts /> */}
+      {/* <Categories /> */}
+      {/* <AboutUs /> */}
       <HowItWorks />
       <Testimonials />
       {/* <PromoBanner /> */}
