@@ -10,6 +10,7 @@ type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
 interface Order {
   id: string;
+  order_id: string | null;
   product_name: string;
   size: string | null;
   color: string | null;
@@ -56,8 +57,8 @@ function OrderCard({ order }: { order: Order }) {
             <p className="text-[10px] font-normal uppercase tracking-[0.15em] text-brand-brown/60">
               {date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
             </p>
-            <p className="text-[10px] text-brand-charcoal/30 font-mono mt-0.5 truncate max-w-[160px]">
-              #{order.id.slice(0, 8).toUpperCase()}
+            <p className="text-[11px] text-brand-dark-brown font-bold font-mono mt-0.5 tracking-wider">
+              {order.order_id ?? `#${order.id.slice(0, 8).toUpperCase()}`}
             </p>
           </div>
         </div>

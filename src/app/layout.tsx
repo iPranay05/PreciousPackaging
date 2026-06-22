@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 
 // Premium serif for headings — highly elegant, luxury feel
 const playfair = Playfair_Display({
@@ -10,7 +11,7 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700", "800"],
   style: ["normal", "italic"],
   display: "swap",
-});
+  });
 
 // Modern, geometric sans for body — highly readable and premium
 const outfit = Outfit({
@@ -33,7 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${outfit.variable} font-sans antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

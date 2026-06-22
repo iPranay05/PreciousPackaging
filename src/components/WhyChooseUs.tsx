@@ -1,57 +1,79 @@
-import { Leaf, Truck, Palette, IndianRupee } from "lucide-react";
+"use client";
+
+import { Factory, ShieldCheck, Gem, Timer, Package, Truck } from "lucide-react";
 
 const features = [
   {
-    title: "Eco-Friendly Materials",
-    description: "Sustainably sourced and fully recyclable luxury packaging.",
-    icon: <Leaf className="w-8 h-8 text-brand-brown" strokeWidth={1.5} />,
+    title: "Manufacturing Unit in Mumbai",
+    description: "State-of-the-art facility with skilled craftsmen",
+    icon: <Factory className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
   },
   {
-    title: "Fast Delivery",
-    description: "Reliable and rapid shipping to meet your business needs.",
-    icon: <Truck className="w-8 h-8 text-brand-brown" strokeWidth={1.5} />,
+    title: "100% Production In-House",
+    description: "Quality control in every step",
+    icon: <ShieldCheck className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
   },
   {
-    title: "Custom Designs",
-    description: "Tailor-made solutions to perfectly reflect your brand identity.",
-    icon: <Palette className="w-8 h-8 text-brand-brown" strokeWidth={1.5} />,
+    title: "Premium Materials",
+    description: "Sourced from trusted global suppliers",
+    icon: <Gem className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
   },
   {
-    title: "Affordable Pricing",
-    description: "Premium quality packaging at highly competitive rates.",
-    icon: <IndianRupee className="w-8 h-8 text-brand-brown" strokeWidth={1.5} />,
+    title: "Fast Turnaround Time",
+    description: "On-time delivery every time",
+    icon: <Timer className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
+  },
+  {
+    title: "Low MOQ 200pcs",
+    description: "Perfect for emerging and growing brands",
+    icon: <Package className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
+  },
+  {
+    title: "PAN India Shipping",
+    description: "Safe & reliable delivery across India",
+    icon: <Truck className="w-6 h-6 text-brand-dark-brown" strokeWidth={1.5} />,
   },
 ];
 
 export default function WhyChooseUs() {
   return (
-    <section className="py-24 bg-brand-cream relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-semibold text-brand-dark-brown tracking-tight mb-4">
-            Why Choose Us
+    <section className="py-16 sm:py-20 bg-[#FAF6F0] border-y border-[#e5e0d8]/60" id="why-choose-us">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center mb-10 sm:mb-12">
+          <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-widest text-brand-dark-brown uppercase">
+            WHY CHOOSE PRECIOUS PACK?
           </h2>
-          <p className="text-brand-charcoal/70 text-lg">
-            We combine premium quality with sustainable practices to deliver the finest packaging solutions.
-          </p>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-          {features.map((feature, index) => (
+        {/* Features Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          {features.map((feature, i) => (
             <div
-              key={index}
-              className="bg-brand-cream rounded-2xl p-6 md:p-8 shadow-sm border border-brand-brown/10 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center group w-[85vw] max-w-[300px] snap-center flex-shrink-0 md:w-auto md:max-w-none md:min-w-0"
+              key={i}
+              className="bg-white rounded-lg p-6 sm:p-8 shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-[#f0ece6] hover:shadow-md transition-all duration-300 flex flex-col items-center text-center hover:-translate-y-1"
             >
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-brand-beige flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
-                {feature.icon}
+              {/* Icon Container */}
+              <div className="w-12 h-12 rounded-full bg-brand-cream/60 flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110">
+                <div className="[&>svg]:w-6 [&>svg]:h-6 [&>svg]:stroke-[1.25]">
+                  {feature.icon}
+                </div>
               </div>
-              <h3 className="text-lg md:text-xl font-normal text-brand-charcoal mb-2 md:mb-3">{feature.title}</h3>
-              <p className="text-brand-charcoal/70 text-sm leading-relaxed">
+
+              {/* Title */}
+              <h3 className="font-sans text-xs sm:text-sm font-bold text-brand-dark-brown mb-3 tracking-wide leading-tight min-h-[40px] flex items-center justify-center">
+                {feature.title}
+              </h3>
+
+              {/* Description */}
+              <p className="font-sans text-[10px] sm:text-xs text-brand-dark-brown/70 leading-relaxed max-w-[160px]">
                 {feature.description}
               </p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

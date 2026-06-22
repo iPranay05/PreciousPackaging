@@ -6,8 +6,8 @@ import Categories from "@/components/Categories";
 import AboutUs from "@/components/AboutUs";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import HowItWorks from "@/components/HowItWorks";
+import SampleKitBanner from "@/components/SampleKitBanner";
 import Testimonials from "@/components/Testimonials";
-import PromoBanner from "@/components/PromoBanner";
 // import Newsletter from "@/components/Newsletter";
 import InstagramFeed from "@/components/InstagramFeed";
 import FAQ from "@/components/FAQ";
@@ -19,16 +19,18 @@ export default function Home() {
       <Header />
       <Hero />
       <Marquee />
+      <Categories />
       <WhyChooseUs />
       {/* <FeaturedProducts /> */}
-      {/* <Categories /> */}
+      
       {/* <AboutUs /> */}
       <HowItWorks />
+      <SampleKitBanner />
       <Testimonials />
       {/* <PromoBanner /> */}
       {/* <Newsletter /> */}
-      <InstagramFeed />
-      <FAQ />
+      {/* <InstagramFeed />
+      <FAQ /> */}
       <Footer />
     </main>
   );

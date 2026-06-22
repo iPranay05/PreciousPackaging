@@ -19,7 +19,7 @@ export default function RefundPage() {
           <p>If a return is approved for damaged goods, we will initiate a full replacement or a refund to your original method of payment. Please allow 5-7 business days for the refund to process to your bank account via Razorpay.</p>
           
           <h2 className="text-xl font-normal text-brand-dark-brown mt-8 mb-4">4. Process</h2>
-          <p>To start a return or cancellation, you can contact us at hi@preciouspackaging.in. If your return is accepted, we'll send you a return shipping label, as well as instructions on how and where to send your package.</p>
+          <p>To start a return or cancellation, you can contact us at Preciouspack1@gmail.com. If your return is accepted, we'll send you a return shipping label, as well as instructions on how and where to send your package.</p>
         </div>
       </div>
     </div>

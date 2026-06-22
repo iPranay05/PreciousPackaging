@@ -24,6 +24,7 @@ interface Product {
 
 interface AdminOrder {
   id: string;
+  order_id: string | null;
   product_name: string;
   size: string | null;
   color: string | null;
@@ -266,7 +267,8 @@ export default function AdminDashboard() {
     o.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     o.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     o.profiles?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.id.toLowerCase().includes(searchQuery.toLowerCase())
+    o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    o.order_id?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredProducts = products.filter(p => 
@@ -471,7 +473,9 @@ export default function AdminDashboard() {
                               </div>
                               <div className="flex flex-col">
                                 <span className="font-serif font-medium text-brand-charcoal text-sm leading-tight max-w-[200px]">{order.product_name}</span>
-                                <span className="text-gray-400 text-[10px] uppercase tracking-wider font-normal mt-2">ID: {order.id.slice(0, 8)}...</span>
+                                <span className="text-brand-brown text-[11px] font-bold font-mono mt-1.5 tracking-wider">
+                                  {order.order_id ?? `#${order.id.slice(0, 8).toUpperCase()}`}
+                                </span>
                               </div>
                             </div>
                           </td>

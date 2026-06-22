@@ -1,45 +1,78 @@
+"use client";
+
+import { ChevronRight } from "lucide-react";
+
 export default function HowItWorks() {
   const steps = [
-    { number: "01", title: "SELECT", desc: "Choose your ideal sustainable packaging format from our curated premium collection." },
-    { number: "02", title: "CUSTOMIZE", desc: "Upload your logo or artwork using our interactive 3D design studio." },
-    { number: "03", title: "PRODUCE", desc: "We manufacture your boxes with eco-friendly inks and FSC-certified materials." },
-    { number: "04", title: "DELIVER", desc: "Receive your stunning packaging in completely carbon-neutral shipping." }
+    {
+      number: "01",
+      title: "CONSULT",
+      desc: "Share your requirements and get expert guidance",
+    },
+    {
+      number: "02",
+      title: "DESIGN & QUOTE",
+      desc: "We create design and share quotation",
+    },
+    {
+      number: "03",
+      title: "PRODUCTION",
+      desc: "Precision manufacturing with strict quality check",
+    },
+    {
+      number: "04",
+      title: "DELIVERY",
+      desc: "Secure packaging and on-time delivery",
+    },
   ];
 
   return (
-    <section className="py-20 lg:py-24 bg-brand-charcoal relative overflow-hidden" id="how-it-works">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-4xl md:text-5xl font-serif text-brand-cream tracking-tight mb-4">How It Works</h2>
-          <p className="text-brand-beige/70 font-light text-base lg:text-lg max-w-2xl mx-auto">
-            From concept to delivery in four simple steps.
+    <section className="py-16 sm:py-20 bg-[#FAF6F0]" id="our-process">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-wider text-brand-dark-brown uppercase">
+            OUR PROCESS
+          </h2>
+          <p className="font-serif italic text-xs sm:text-sm text-brand-dark-brown/70 mt-2">
+            From concept to delivery in 4 simple steps.
           </p>
         </div>
 
-        {/* Horizontal scroll container for mobile, Grid for desktop */}
-        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-8 -mx-4 px-4 md:mx-0 md:px-0">
-          
+        {/* Steps Container */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 relative">
           {steps.map((step, i) => (
-            <div 
-              key={i} 
-              className="flex flex-col relative z-10 w-[85vw] max-w-[300px] snap-center flex-shrink-0 md:w-auto md:max-w-none bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-colors group"
-            >
-              <div className="w-14 h-14 rounded-full bg-brand-dark-brown border border-brand-brown/30 text-brand-cream flex items-center justify-center font-serif text-xl mb-6 shadow-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+            <div key={i} className="flex flex-col items-center text-center relative group">
+              
+              {/* Connector Line (Desktop only) */}
+              {i < 3 && (
+                <div className="hidden lg:flex absolute top-7 left-[calc(50%+2.5rem)] w-[calc(100%-5rem)] items-center z-0">
+                  <div className="h-[1px] flex-1 border-t border-dashed border-brand-brown/20"></div>
+                  <ChevronRight className="w-3 h-3 text-brand-brown/40 -ml-1.5" />
+                </div>
+              )}
+
+              {/* Step Circle Badge */}
+              <div className="w-14 h-14 rounded-full bg-white border border-brand-brown/10 shadow-sm flex items-center justify-center font-serif text-base font-bold text-brand-dark-brown mb-6 relative z-10 hover:border-brand-brown/30 hover:scale-105 transition-all duration-300">
                 {step.number}
               </div>
-              <h3 className="text-lg md:text-xl font-serif text-white mb-3 tracking-widest uppercase">{step.title}</h3>
-              <p className="text-brand-beige/70 leading-relaxed text-sm font-light">
+
+              {/* Step Title */}
+              <h3 className="font-sans text-xs sm:text-sm font-bold text-brand-dark-brown tracking-wider uppercase mb-2">
+                {step.title}
+              </h3>
+
+              {/* Step Description */}
+              <p className="font-sans text-[11px] sm:text-xs text-brand-dark-brown/70 leading-relaxed max-w-[200px] mx-auto">
                 {step.desc}
               </p>
+
             </div>
           ))}
-
         </div>
-      </div>
 
-      {/* Decorative background gradients */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-brand-dark-brown/30 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-brand-brown/20 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+      </div>
     </section>
   );
 }

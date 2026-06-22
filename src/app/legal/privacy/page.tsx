@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           <p>When you place an order through the Site, we will maintain your Order Information for our records unless and until you ask us to delete this information.</p>
           
           <h2 className="text-xl font-normal text-brand-dark-brown mt-8 mb-4">4. Contact Us</h2>
-          <p>For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at hi@preciouspackaging.in.</p>
+          <p>For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at Preciouspack1@gmail.com.</p>
         </div>
       </div>
     </div>

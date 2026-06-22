@@ -5,8 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { supabasePublic } from "@/lib/supabase";
 import { Heart, Search, Eye } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ─── DATA & ICONS ─────────────────────────────────────────────────────────────
 
@@ -179,15 +182,13 @@ function ProductCard({ product, onAdd }: { product: Product; onAdd: (p: Product)
   );
 }
 
-
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 function ProductsContent() {
   const router = useRouter();
-  const { user, supabase } = useAuth();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
-  const [cart, setCart] = useState<{ product: Product; qty: number }[]>([]);
-  const [cartOpen, setCartOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -216,21 +217,6 @@ function ProductsContent() {
     fetchProducts();
   }, []);
 
-  const handleAdd = (product: Product) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) return prev.map((i) => i.product.id === product.id ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { product, qty: 1 }];
-    });
-  };
-
-  const handleRemove = (id: string) => setCart((prev) => prev.filter((i) => i.product.id !== id));
-
-  const totalItems = cart.reduce((s, i) => s + i.qty, 0);
-  const totalPrice = cart.reduce((s, i) => s + i.product.price * i.qty, 0);
-
-
-
   const filtered = products.filter((p) =>
     activeCategory === "all" || p.categorySlug === activeCategory
   );
@@ -244,38 +230,11 @@ function ProductsContent() {
 
   return (
     <div className="min-h-screen bg-brand-cream">
+      {/* Global Header */}
+      <Header />
 
-      {/* ─── Header ─── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-cream border-b border-[#e5e0d8] shadow-sm">
-        <div className="max-w-[1400px] mx-auto px-6 h-[72px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-            <img src="/images/LOGO.jpg" alt="PreciousPackaging" className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply" />
-            <span className="font-serif font-medium tracking-wide text-xl sm:text-2xl text-brand-charcoal group-hover:opacity-80 transition-opacity">
-              Precious<span className="text-brand-charcoal/70">Packaging</span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-6 sm:gap-8 text-sm text-brand-charcoal">
-            <Link href="/" className="hidden sm:block hover:text-brand-brown transition-colors">Home</Link>
-            <button
-              onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 hover:text-brand-brown transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              <span>Cart</span>
-              <span className="border border-[#e5e0d8] bg-brand-cream px-2 py-0.5 rounded-sm text-[11px] font-medium ml-1">
-                {totalItems} items
-              </span>
-            </button>
-            <Link href="/contact" className="hidden sm:flex items-center gap-1.5 hover:text-brand-brown transition-colors">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-              Help
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* ─── Hero with Fabric Banner ─── */}
-      <section className="pt-[72px] relative w-full overflow-hidden bg-brand-dark-brown">
+      {/* Hero with Fabric Banner */}
+      <section className="pt-20 relative w-full overflow-hidden bg-brand-dark-brown">
         {/* Fabric Background Image */}
         <div className="absolute inset-0 w-full h-full scale-105 opacity-80">
           <Image 
@@ -325,7 +284,7 @@ function ProductsContent() {
         </div>
       </section>
 
-      {/* ─── Products Area ─── */}
+      {/* Products Area */}
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-12">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -349,7 +308,7 @@ function ProductsContent() {
                     <div className="w-6 h-[1px] bg-brand-brown/40" />
                   </div>
 
-                  {/* Decorative inner corner flourishes (optional/subtle) */}
+                  {/* Decorative inner corner flourishes */}
                   <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-[#e1d5c9]/60 rounded-tl-lg" />
                   <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-[#e1d5c9]/60 rounded-tr-lg" />
                   <div className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-[#e1d5c9]/60 rounded-bl-lg" />
@@ -358,7 +317,7 @@ function ProductsContent() {
                   {/* Product grid */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-12">
                     {cats.map((p) => (
-                      <ProductCard key={p.id} product={p} onAdd={handleAdd} />
+                      <ProductCard key={p.id} product={p} onAdd={addToCart} />
                     ))}
                   </div>
                 </div>
@@ -369,74 +328,8 @@ function ProductsContent() {
         )}
       </main>
 
-      {/* ─── Cart Drawer ─── */}
-      {cartOpen && (
-        <div className="fixed inset-0 z-[100] flex">
-          <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
-          <div className="w-full max-w-sm bg-brand-cream h-full shadow-2xl flex flex-col overflow-hidden">
-            <div className="px-6 py-5 border-b border-[#e5e0d8] flex items-center justify-between">
-              <h2 className="font-serif text-xl tracking-tight text-brand-charcoal">Your Cart {totalItems > 0 && `(${totalItems})`}</h2>
-              <button onClick={() => setCartOpen(false)} className="text-gray-400 hover:text-brand-brown transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto divide-y divide-[#e5e0d8] px-6">
-              {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-3 pb-20">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                  <p className="text-sm font-serif italic">Your cart is elegantly empty.</p>
-                </div>
-              ) : (
-                cart.map(({ product, qty }) => (
-                  <div key={product.id} className="py-5 flex gap-4 items-start group">
-                    <div className="relative w-16 h-16 rounded-lg bg-[#eeeae6] flex-shrink-0 overflow-hidden border border-[#e1d5c9]/50">
-                      <Image src={product.image} alt={product.description} fill className="object-contain p-2" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-serif text-sm leading-tight text-brand-charcoal truncate">{product.description}</p>
-                      <p className="text-gray-400 text-xs mt-0.5 tracking-wider uppercase">{product.size} cm · {product.category}</p>
-                      <p className="text-brand-brown font-medium text-sm mt-1">₹{product.price} × {qty}</p>
-                      <Link
-                        href={`/products/${product.id}`}
-                        className="inline-flex items-center gap-1 mt-2 text-[10px] uppercase tracking-widest text-brand-dark-brown font-semibold hover:text-brand-brown transition-colors border-b border-brand-dark-brown/30 hover:border-brand-brown pb-px"
-                        onClick={() => setCartOpen(false)}
-                      >
-                        Order Now →
-                      </Link>
-                    </div>
-                    <button onClick={() => handleRemove(product.id)} className="text-gray-300 hover:text-red-400 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100 p-2">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-            <div className="px-6 py-6 border-t border-[#e5e0d8] bg-brand-cream">
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between font-serif text-lg text-brand-charcoal font-normal tracking-wide">
-                  <span>Est. Total</span>
-                  <span>₹{totalPrice}</span>
-                </div>
-                <p className="text-[10px] uppercase tracking-widest text-brand-brown/70 mt-1 mb-5 font-normal">+5% GST · Shipping at checkout</p>
-
-                <div className="bg-[#f5f0eb] rounded-xl p-4 border border-[#e1d5c9]">
-                  <p className="text-xs text-brand-charcoal/70 leading-relaxed">
-                    👆 Click <span className="font-semibold text-brand-dark-brown">Order Now</span> on each item above to customise size, colour & quantity before placing your order.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ─── Footer Placeholder (Replaced by global footer outside page normally) ─── */}
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }
@@ -452,4 +345,3 @@ export default function ProductsPage() {
     </Suspense>
   );
 }
-

@@ -1,59 +1,87 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 const categories = [
-  { id: 1, name: "MAILERS", size: "col-span-2 md:col-span-8", src: "/images/category_mailer.png", bg: "bg-brand-beige" },
-  { id: 2, name: "POUCHES", size: "col-span-1 md:col-span-4", src: "/images/category_pouch.png", bg: "bg-brand-beige" },
-  { id: 3, name: "RIGID BOXES", size: "col-span-1 md:col-span-5", src: "/images/category_rigid.png", bg: "bg-[#FEE8F4]" },
-  { id: 4, name: "CUSTOM", size: "col-span-2 md:col-span-7", src: "/images/product1.png", bg: "bg-[#E8FEED]" },
+  {
+    name: "Ring Boxes",
+    src: "/images/collection_ring.png",
+    href: "/products?category=ring-boxes",
+  },
+  {
+    name: "Earring Boxes",
+    src: "/images/collection_earring.png",
+    href: "/products?category=earring-boxes",
+  },
+  {
+    name: "Necklace Boxes",
+    src: "/images/collection_necklace.png",
+    href: "/products?category=necklace-boxes",
+  },
+  {
+    name: "Drawer Boxes",
+    src: "/images/collection_drawer.png",
+    href: "/products?category=drawer-boxes",
+  },
+  {
+    name: "Magnetic Boxes",
+    src: "/images/collection_magnetic.png",
+    href: "/products?category=magnetic-boxes",
+  },
+  {
+    name: "Paper Bags",
+    src: "/images/collection_bag.png",
+    href: "/products?category=paper-bags",
+  },
 ];
 
 export default function Categories() {
   return (
-    <section className="py-20 bg-brand-beige" id="categories">
+    <section className="py-16 sm:py-20 bg-[#FAF6F0]" id="categories">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl md:text-5xl font-semibold text-center text-black mb-16 tracking-tighter">SHOP BY CATEGORY</h2>
+        
+        {/* Section Header */}
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="font-sans text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wider text-brand-dark-brown uppercase mb-3">
+            Our Packaging Collection
+          </h2>
+          <p className="font-serif text-sm sm:text-base md:text-lg text-brand-dark-brown/70 max-w-xl mx-auto">
+            Premium packaging solutions for every jewelry collection.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-3 sm:gap-4 md:gap-6 lg:gap-8 h-auto md:h-[600px] lg:h-[700px]">
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`${category.size} ${category.bg} relative rounded-2xl md:rounded-3xl overflow-hidden group cursor-pointer border border-black/5 p-4 sm:p-5 md:p-8 flex flex-col justify-end min-h-[180px] sm:min-h-[220px] md:min-h-0`}
+        {/* Collection Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+          {categories.map((category, i) => (
+            <Link
+              key={i}
+              href={category.href}
+              className="group bg-[#FAF6F0] rounded-2xl p-2.5 sm:p-3 border border-brand-brown/5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
             >
-              <div className="absolute inset-0 z-0">
-                <div className="relative w-full h-full transition-transform duration-1000 group-hover:scale-105">
-                  <Image
-                    src={category.src}
-                    alt={category.name}
-                    fill
-                    className="object-cover"
-                  />
-                  {/* Subtle darkening overlay for text contrast */}
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-500" />
-                </div>
+              {/* Image Container */}
+              <div className="relative aspect-[4/5] w-full rounded-xl overflow-hidden bg-[#FAF6F0] mb-4">
+                <Image
+                  src={category.src}
+                  alt={category.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
 
-              <div className="relative z-10 w-full flex justify-between items-end mt-auto">
-                <div className="bg-brand-cream/95 backdrop-blur px-4 py-3 md:px-8 md:py-5 rounded-xl md:rounded-2xl shadow-lg border border-white/20 transform transition-transform duration-500 group-hover:-translate-y-2 w-full md:w-auto">
-                  <h3 className="font-semibold tracking-widest uppercase text-sm md:text-xl text-brand-dark-brown">{category.name}</h3>
-                  <p className="text-gray-500 text-[10px] md:text-sm font-medium mt-0.5 md:mt-1">Explore Collection</p>
-                </div>
-                
-                <div className="hidden sm:flex w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-cream/95 backdrop-blur items-center justify-center shadow-lg text-brand-dark-brown transform transition-transform duration-500 group-hover:-translate-y-2 group-hover:bg-brand-dark-brown group-hover:text-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 md:w-6 md:h-6">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </div>
+              {/* Text Container */}
+              <div className="text-center pb-2 flex flex-col items-center">
+                <h3 className="font-serif text-sm sm:text-base font-bold text-brand-dark-brown mb-2 tracking-wide">
+                  {category.name}
+                </h3>
+                <span className="font-sans text-[9px] sm:text-[10px] font-bold text-brand-dark-brown/60 group-hover:text-brand-dark-brown tracking-[0.2em] uppercase transition-colors flex items-center gap-1">
+                  Explore <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+                </span>
               </div>
-            </motion.div>
+            </Link>
           ))}
         </div>
+
       </div>
     </section>
   );
