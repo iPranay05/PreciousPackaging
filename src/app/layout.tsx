@@ -24,6 +24,11 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "PreciousPackaging | Premium Eco-Friendly Packaging",
   description: "Immersive e-commerce store for PreciousPackaging",
+  icons: {
+    icon: "/images/image.png",
+    shortcut: "/images/image.png",
+    apple: "/images/image.png",
+  },
 };
 
 export default function RootLayout({
