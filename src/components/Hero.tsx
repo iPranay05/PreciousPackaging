@@ -67,7 +67,7 @@ export default function Hero() {
               <Package size={22} className="text-brand-dark-brown" strokeWidth={1.5} />
               <div className="flex flex-col">
                 <span className="text-[10px] sm:text-xs font-bold text-brand-dark-brown uppercase tracking-wider leading-tight">MOQ</span>
-                <span className="text-[10px] sm:text-xs text-brand-dark-brown/70 leading-normal">200 pcs</span>
+                <span className="text-[10px] sm:text-xs text-brand-dark-brown/70 leading-normal">300 pcs</span>
               </div>
             </div>
             {/* Pan India Delivery */}

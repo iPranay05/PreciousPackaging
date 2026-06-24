@@ -12,9 +12,9 @@ export default function Footer() {
           <div className="lg:col-span-1 flex flex-col justify-start">
             <Link href="/" className="flex items-center gap-2.5 mb-4 group inline-flex">
               <img 
-                src="/images/LOGO.jpg" 
+                src="/images/image.png" 
                 alt="PreciousPack" 
-                className="h-10 w-auto object-contain invert mix-blend-screen contrast-125" 
+                className="h-10 w-auto object-contain mix-blend-screen brightness-200" 
               />
               <span className="font-serif text-2xl font-bold text-white tracking-wide group-hover:opacity-90 transition-opacity">
                 Precious<span className="font-normal font-sans text-white/90">Pack</span>
