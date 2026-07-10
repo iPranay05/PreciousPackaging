@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { supabasePublic } from "@/lib/supabase";
-import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight, Edit2, Image as ImageIcon, X, Upload, Layout, CheckCircle2 } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight, Edit2, Image as ImageIcon, X, Upload, Layout, CheckCircle2, GripVertical } from "lucide-react";
+import { DEFAULT_CATEGORIES, CollectionItem } from "@/components/Categories";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
@@ -75,6 +76,12 @@ export default function AdminDashboard() {
   const [savingHero, setSavingHero] = useState(false);
   const [heroSaved, setHeroSaved] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
+
+  // ── Collections ──
+  const [collections, setCollections] = useState<CollectionItem[]>(DEFAULT_CATEGORIES);
+  const [savingCollections, setSavingCollections] = useState(false);
+  const [collectionsSaved, setCollectionsSaved] = useState(false);
+  const [uploadingCollectionIdx, setUploadingCollectionIdx] = useState<number | null>(null);
   
   const [newProduct, setNewProduct] = useState({
     id: "",
@@ -141,6 +148,15 @@ export default function AdminDashboard() {
     } catch (err) {
       // Table may not exist yet — silently ignore
     }
+    try {
+      const { data } = await supabase
+        .from("collection_items")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (data && data.length > 0) setCollections(data as CollectionItem[]);
+    } catch (err) {
+      // Table may not exist yet — silently ignore
+    }
   }, [supabase]);
 
   useEffect(() => {
@@ -197,6 +213,50 @@ export default function AdminDashboard() {
       alert("Failed to save. Make sure the site_settings table exists in Supabase.");
     } finally {
       setSavingHero(false);
+    }
+  };
+
+  const handleCollectionImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCollectionIdx(idx);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `collection-${idx}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+      setCollections(prev => prev.map((c, i) => i === idx ? { ...c, src: publicUrl } : c));
+    } catch (err) {
+      console.error('Collection upload error:', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingCollectionIdx(null);
+    }
+  };
+
+  const saveCollections = async () => {
+    setSavingCollections(true);
+    try {
+      // Upsert all rows — insert new ones, update existing by id
+      const { error } = await supabase
+        .from("collection_items")
+        .upsert(
+          collections.map((c, i) => ({ ...c, sort_order: i + 1 })),
+          { onConflict: "id" }
+        );
+      if (error) throw error;
+      setCollectionsSaved(true);
+      setTimeout(() => setCollectionsSaved(false), 3000);
+    } catch (err) {
+      console.error("Save collections error:", err);
+      alert("Failed to save. Make sure the collection_items table exists in Supabase.");
+    } finally {
+      setSavingCollections(false);
     }
   };
 
@@ -594,6 +654,86 @@ export default function AdminDashboard() {
                 {heroSaved && (
                   <p className="text-center text-[11px] text-green-600 mt-3 font-normal uppercase tracking-widest animate-in fade-in">
                     Hero image updated — visible on the homepage now.
+                  </p>
+                )}
+
+                {/* ── Divider ── */}
+                <div className="my-10 border-t border-[#e1d5c9]" />
+
+                {/* ── Collections Editor ── */}
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-[#f5f0eb] border border-[#e1d5c9] rounded-xl flex items-center justify-center">
+                    <ImageIcon size={18} className="text-brand-brown" />
+                  </div>
+                  <div>
+                    <h2 className="font-serif font-medium text-brand-charcoal text-lg tracking-wide">Packaging Collection</h2>
+                    <p className="text-[10px] text-brand-brown uppercase tracking-widest mt-0.5">Edit collection card names and images</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  {collections.map((item, idx) => (
+                    <div key={item.id} className="flex items-center gap-4 bg-[#f5f0eb] border border-[#e1d5c9] rounded-2xl p-4">
+                      {/* Drag handle visual */}
+                      <GripVertical size={16} className="text-brand-brown/40 flex-shrink-0" />
+
+                      {/* Current image thumbnail */}
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-brand-cream border border-[#e1d5c9] flex-shrink-0">
+                        <img
+                          src={item.src}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).src = "/images/collection_ring.png"; }}
+                        />
+                      </div>
+
+                      {/* Name input */}
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => setCollections(prev => prev.map((c, i) => i === idx ? { ...c, name: e.target.value } : c))}
+                        className="flex-1 min-w-0 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl px-4 py-2.5 text-sm text-brand-charcoal outline-none transition-all"
+                        placeholder="Collection name"
+                      />
+
+                      {/* Upload image button */}
+                      <label className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[10px] font-normal uppercase tracking-widest cursor-pointer transition-all ${uploadingCollectionIdx === idx ? "border-brand-brown/40 bg-brand-cream text-brand-brown/50" : "border-[#e1d5c9] bg-brand-cream hover:border-brand-brown hover:bg-[#f5f0eb] text-brand-brown"}`}>
+                        {uploadingCollectionIdx === idx ? (
+                          <div className="w-4 h-4 border-2 border-brand-brown/40 border-t-brand-brown rounded-full animate-spin" />
+                        ) : (
+                          <Upload size={14} />
+                        )}
+                        <span className="hidden sm:inline">{uploadingCollectionIdx === idx ? "Uploading..." : "Image"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleCollectionImageUpload(e, idx)}
+                          disabled={uploadingCollectionIdx !== null}
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Save Collections Button */}
+                <button
+                  onClick={saveCollections}
+                  disabled={savingCollections || uploadingCollectionIdx !== null}
+                  className="w-full py-4 bg-brand-charcoal text-brand-cream rounded-xl font-normal uppercase tracking-widest text-[11px] hover:bg-[#3a352f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                >
+                  {savingCollections ? (
+                    <><div className="w-4 h-4 border-2 border-[#e1d5c9]/40 border-t-[#e1d5c9] rounded-full animate-spin" /> Saving...</>
+                  ) : collectionsSaved ? (
+                    <><CheckCircle2 size={16} className="text-green-400" /> Collection Saved</>
+                  ) : (
+                    <><ImageIcon size={16} /> Save Collection Changes</>
+                  )}
+                </button>
+
+                {collectionsSaved && (
+                  <p className="text-center text-[11px] text-green-600 mt-3 font-normal uppercase tracking-widest animate-in fade-in">
+                    Collection updated — visible on the homepage now.
                   </p>
                 )}
               </div>
