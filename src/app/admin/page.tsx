@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { supabasePublic } from "@/lib/supabase";
-import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight, Edit2, Image as ImageIcon, X, Upload } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle, ChevronDown, Plus, Trash2, Tag, Box, Hash, RefreshCw, ChevronLeft, Search, LayoutDashboard, ShoppingBag, ArrowUpRight, Edit2, Image as ImageIcon, X, Upload, Layout, CheckCircle2 } from "lucide-react";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   const { user, profile, loading: authLoading, supabase } = useAuth();
   const router = useRouter();
   
-  const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "products" | "content">("orders");
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [fetching, setFetching] = useState(true);
@@ -68,6 +68,13 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [uploading, setUploading] = useState(false);
+  
+  // ── Content / Site Settings ──
+  const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [heroImagePreview, setHeroImagePreview] = useState("/images/HeroNew.png");
+  const [savingHero, setSavingHero] = useState(false);
+  const [heroSaved, setHeroSaved] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
   
   const [newProduct, setNewProduct] = useState({
     id: "",
@@ -120,18 +127,77 @@ export default function AdminDashboard() {
     }
   }, [supabase]);
 
+  const fetchContent = useCallback(async () => {
+    try {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "hero_image")
+        .single();
+      if (data?.value) {
+        setHeroImageUrl(data.value);
+        setHeroImagePreview(data.value);
+      }
+    } catch (err) {
+      // Table may not exist yet — silently ignore
+    }
+  }, [supabase]);
+
   useEffect(() => {
     if (profile?.is_admin) {
       if (activeTab === "orders") fetchOrders();
-      else fetchProducts();
+      else if (activeTab === "products") fetchProducts();
+      else if (activeTab === "content") fetchContent();
     }
-  }, [profile, activeTab, fetchOrders, fetchProducts]);
+  }, [profile, activeTab, fetchOrders, fetchProducts, fetchContent]);
 
   const updateStatus = async (orderId: string, newStatus: OrderStatus) => {
     setUpdating(orderId);
     await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
     setOrders((prev) => prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o));
     setUpdating(null);
+  };
+
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingHero(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `hero-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+      setHeroImageUrl(publicUrl);
+      setHeroImagePreview(publicUrl);
+    } catch (err) {
+      console.error('Hero upload error:', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingHero(false);
+    }
+  };
+
+  const saveHeroImage = async () => {
+    if (!heroImageUrl) return;
+    setSavingHero(true);
+    try {
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert({ key: "hero_image", value: heroImageUrl }, { onConflict: "key" });
+      if (error) throw error;
+      setHeroSaved(true);
+      setTimeout(() => setHeroSaved(false), 3000);
+    } catch (err) {
+      console.error("Save hero error:", err);
+      alert("Failed to save. Make sure the site_settings table exists in Supabase.");
+    } finally {
+      setSavingHero(false);
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isGallery: boolean = false, isEdit: boolean = false) => {
@@ -301,7 +367,7 @@ export default function AdminDashboard() {
           
           <div className="flex items-center gap-3 sm:gap-4">
             <button 
-              onClick={() => activeTab === "orders" ? fetchOrders() : fetchProducts()}
+              onClick={() => activeTab === "orders" ? fetchOrders() : activeTab === "products" ? fetchProducts() : fetchContent()}
               disabled={fetching}
               className="w-10 h-10 bg-brand-cream border border-[#e1d5c9] hover:border-brand-brown rounded-full flex items-center justify-center text-brand-brown hover:bg-[#f5f0eb] transition-all shadow-sm group"
               title="Refresh Data"
@@ -396,9 +462,16 @@ export default function AdminDashboard() {
               >
                 Products
               </button>
+              <button 
+                onClick={() => setActiveTab("content")}
+                className={`flex-1 md:w-32 py-2.5 rounded-lg text-[11px] font-sans font-normal uppercase tracking-widest transition-all duration-300 ${activeTab === "content" ? "bg-brand-cream text-brand-charcoal shadow-sm ring-1 ring-[#e1d5c9]" : "text-brand-brown hover:text-brand-charcoal"}`}
+              >
+                Content
+              </button>
             </div>
 
             <div className="flex gap-3 w-full md:w-auto">
+              {activeTab !== "content" && (
               <div className="relative group w-full md:w-72">
                 <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-brown group-focus-within:text-brand-charcoal transition-colors" />
                 <input 
@@ -409,6 +482,7 @@ export default function AdminDashboard() {
                   className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-11 pr-4 py-3 text-sm text-brand-charcoal outline-none transition-all shadow-sm font-sans"
                 />
               </div>
+              )}
               {activeTab === "products" && (
                 <button 
                   onClick={() => setShowAddProduct(true)}
@@ -422,7 +496,108 @@ export default function AdminDashboard() {
 
           {/* Table Container */}
           <div className="overflow-x-auto">
-            {activeTab === "orders" ? (
+            {activeTab === "content" ? (
+              /* ── Content / Site Settings Panel ── */
+              <div className="p-6 sm:p-10 max-w-2xl mx-auto">
+                {/* Section Header */}
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-[#f5f0eb] border border-[#e1d5c9] rounded-xl flex items-center justify-center">
+                    <Layout size={18} className="text-brand-brown" />
+                  </div>
+                  <div>
+                    <h2 className="font-serif font-medium text-brand-charcoal text-lg tracking-wide">Homepage Hero</h2>
+                    <p className="text-[10px] text-brand-brown uppercase tracking-widest mt-0.5">Update the hero section image</p>
+                  </div>
+                </div>
+
+                {/* Current Image Preview */}
+                <div className="mb-6">
+                  <p className="text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-3 ml-1">Current Image Preview</p>
+                  <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-[#f5f0eb] border border-[#e1d5c9] shadow-sm">
+                    <img
+                      src={heroImagePreview}
+                      alt="Hero preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/images/HeroNew.png"; }}
+                    />
+                    <div className="absolute top-3 left-3 bg-brand-charcoal/70 text-brand-cream text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-full backdrop-blur-sm">
+                      Live Preview
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload New Image */}
+                <div className="mb-6">
+                  <p className="text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-3 ml-1">Upload New Image</p>
+                  <label className={`flex flex-col items-center justify-center w-full border-2 border-dashed rounded-2xl py-10 gap-3 cursor-pointer transition-all ${uploadingHero ? "border-brand-brown/40 bg-[#f5f0eb]/50" : "border-[#e1d5c9] hover:border-brand-brown hover:bg-[#f5f0eb]/50"}`}>
+                    {uploadingHero ? (
+                      <>
+                        <div className="w-8 h-8 border-3 border-brand-brown border-t-transparent rounded-full animate-spin" />
+                        <span className="text-[11px] text-brand-brown uppercase tracking-widest">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-12 h-12 bg-[#f5f0eb] border border-[#e1d5c9] rounded-xl flex items-center justify-center">
+                          <Upload size={22} className="text-brand-brown" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-serif font-medium text-brand-charcoal">Click to upload a new hero image</p>
+                          <p className="text-[11px] text-brand-brown mt-1">PNG, JPG, WEBP recommended · Max 10MB</p>
+                        </div>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleHeroImageUpload}
+                      disabled={uploadingHero}
+                    />
+                  </label>
+                </div>
+
+                {/* Or paste a URL */}
+                <div className="mb-8">
+                  <p className="text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-3 ml-1">Or Paste an Image URL</p>
+                  <div className="flex gap-3">
+                    <div className="relative flex-1">
+                      <ImageIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-brown" />
+                      <input
+                        type="text"
+                        placeholder="https://example.com/hero.jpg"
+                        value={heroImageUrl}
+                        onChange={(e) => {
+                          setHeroImageUrl(e.target.value);
+                          if (e.target.value) setHeroImagePreview(e.target.value);
+                        }}
+                        className="w-full bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown focus:ring-2 focus:ring-brand-brown/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-brand-charcoal outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <button
+                  onClick={saveHeroImage}
+                  disabled={!heroImageUrl || savingHero || uploadingHero}
+                  className="w-full py-4 bg-brand-charcoal text-brand-cream rounded-xl font-normal uppercase tracking-widest text-[11px] hover:bg-[#3a352f] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                >
+                  {savingHero ? (
+                    <><div className="w-4 h-4 border-2 border-[#e1d5c9]/40 border-t-[#e1d5c9] rounded-full animate-spin" /> Saving...</>
+                  ) : heroSaved ? (
+                    <><CheckCircle2 size={16} className="text-green-400" /> Image Saved Successfully</>
+                  ) : (
+                    <><ImageIcon size={16} /> Save Hero Image</>
+                  )}
+                </button>
+
+                {heroSaved && (
+                  <p className="text-center text-[11px] text-green-600 mt-3 font-normal uppercase tracking-widest animate-in fade-in">
+                    Hero image updated — visible on the homepage now.
+                  </p>
+                )}
+              </div>
+            ) : activeTab === "orders" ? (
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-brand-cream border-b border-[#e1d5c9] text-brand-brown uppercase text-[10px] items-center tracking-[0.15em] font-serif font-normal">

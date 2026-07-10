@@ -3,8 +3,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Package, Truck, Factory, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabasePublic } from "@/lib/supabase";
+
+const DEFAULT_HERO_IMAGE = "/images/HeroNew.png";
 
 export default function Hero() {
+  const [heroImage, setHeroImage] = useState(DEFAULT_HERO_IMAGE);
+
+  useEffect(() => {
+    supabasePublic
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_image")
+      .single()
+      .then(({ data }) => {
+        if (data?.value) setHeroImage(data.value);
+      });
+  }, []);
+
   return (
     <section className="relative w-full flex flex-col lg:flex-row bg-[#ebdcd0] overflow-hidden">
       {/* Skewed Background Layer for Desktop Left side only */}
@@ -15,11 +32,12 @@ export default function Hero() {
       {/* === MOBILE: Image shown at top === */}
       <div className="relative w-full h-[56vw] min-h-[220px] max-h-[360px] block lg:hidden z-0">
         <Image
-          src="/images/HeroNew.png"
+          src={heroImage}
           alt="Luxury Jewelry Packaging Showcase"
           fill
           className="object-cover object-center"
           priority
+          unoptimized={heroImage.startsWith("http")}
         />
         {/* Gradient fade to cream at bottom so content blends */}
         <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-b from-transparent to-brand-cream" />
@@ -28,11 +46,12 @@ export default function Hero() {
       {/* === DESKTOP: Image positioned absolutely on the right === */}
       <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:right-0 lg:w-[55%] lg:h-full z-0">
         <Image
-          src="/images/HeroNew.png"
+          src={heroImage}
           alt="Luxury Jewelry Packaging Showcase"
           fill
           className="object-cover object-center"
           priority
+          unoptimized={heroImage.startsWith("http")}
         />
       </div>
 

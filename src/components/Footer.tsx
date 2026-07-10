@@ -11,11 +11,13 @@ export default function Footer() {
           {/* Column 1: Brand block */}
           <div className="lg:col-span-1 flex flex-col justify-start">
             <Link href="/" className="flex items-center gap-2.5 mb-4 group inline-flex">
-              <img 
-                src="/images/image.png" 
-                alt="PreciousPack" 
-                className="h-10 w-auto object-contain mix-blend-screen brightness-200" 
-              />
+              <div className="bg-brand-cream rounded-lg p-1 flex-shrink-0">
+                <img 
+                  src="/images/image.png" 
+                  alt="PreciousPack" 
+                  className="h-8 w-auto object-contain mix-blend-multiply" 
+                />
+              </div>
               <span className="font-serif text-2xl font-bold text-white tracking-wide group-hover:opacity-90 transition-opacity">
                 Precious<span className="font-normal font-sans text-white/90">Pack</span>
               </span>
