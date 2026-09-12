@@ -35,14 +35,6 @@ export default function Signup() {
       if (signupError) throw signupError;
 
       if (data.user) {
-        // 2. Create profile entry
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: data.user.id,
-          full_name: fullName,
-          email: email,
-        });
-
-        if (profileError) throw profileError;
         router.push("/");
         router.refresh();
       }

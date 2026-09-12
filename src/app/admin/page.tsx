@@ -98,8 +98,14 @@ export default function AdminDashboard() {
   const [newImageUrl, setNewImageUrl] = useState("");
 
   useEffect(() => {
-    if (!authLoading && (!user || !profile)) return;
-    if (!authLoading && profile && !profile.is_admin) router.push("/");
+    if (authLoading) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    if (profile && !profile.is_admin) {
+      router.push("/");
+    }
   }, [user, profile, authLoading, router]);
 
   const fetchOrders = useCallback(async () => {
