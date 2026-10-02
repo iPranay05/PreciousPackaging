@@ -9,6 +9,12 @@ import { supabasePublic } from "@/lib/supabase";
 
 // ─── Shared product data (mirrors products/page.tsx) ────────────────────────
 
+type ColorVariant = {
+  label: string;
+  hex: string;
+  image: string;
+};
+
 type Product = {
   id: string;
   category: string;
@@ -18,20 +24,21 @@ type Product = {
   price: number;
   image: string;
   images?: string[];
+  colors?: ColorVariant[];
   badge?: string;
 };
 
-// ─── Preset colours ──────────────────────────────────────────────────────────
+// ─── Default preset colours (used when product has no custom colors) ─────────
 
-const PRESET_COLORS = [
-  { label: "Midnight Black",   hex: "#1C1C1E" },
-  { label: "Ivory White",      hex: "#F5F0E8" },
-  { label: "Champagne Gold",   hex: "#C9A84C" },
-  { label: "Rose Gold",        hex: "#B76E79" },
-  { label: "Deep Navy",        hex: "#2E7D32" },
-  { label: "Emerald Green",    hex: "#215A4A" },
-  { label: "Blush Pink",       hex: "#F4C2C2" },
-  { label: "Slate Grey",       hex: "#6B7280" },
+const DEFAULT_PRESET_COLORS: ColorVariant[] = [
+  { label: "Midnight Black",   hex: "#1C1C1E", image: "" },
+  { label: "Ivory White",      hex: "#F5F0E8", image: "" },
+  { label: "Champagne Gold",   hex: "#C9A84C", image: "" },
+  { label: "Rose Gold",        hex: "#B76E79", image: "" },
+  { label: "Deep Navy",        hex: "#2E7D32", image: "" },
+  { label: "Emerald Green",    hex: "#215A4A", image: "" },
+  { label: "Blush Pink",       hex: "#F4C2C2", image: "" },
+  { label: "Slate Grey",       hex: "#6B7280", image: "" },
 ];
 
 const CATEGORY_BG: Record<string, string> = {
@@ -53,7 +60,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading]             = useState(true);
   const [activeImage, setActiveImage]     = useState<string>("");
 
-  const [selectedColor, setSelectedColor] = useState<string>(PRESET_COLORS[0].hex);
+  const [selectedColor, setSelectedColor] = useState<string>(DEFAULT_PRESET_COLORS[0].hex);
   const [customHex, setCustomHex]         = useState<string>("");
   const [isCustom, setIsCustom]           = useState(false);
   const [qty, setQty]                     = useState(1);
@@ -74,6 +81,11 @@ export default function ProductDetailPage() {
         if (prodData) {
           setProduct(prodData);
           setActiveImage(prodData.image);
+          // Initialise to first product color if colors are defined
+          if (prodData.colors && prodData.colors.length > 0) {
+            setSelectedColor(prodData.colors[0].hex);
+            if (prodData.colors[0].image) setActiveImage(prodData.colors[0].image);
+          }
           
           // Fetch related products
           const { data: relData } = await supabasePublic
@@ -98,9 +110,14 @@ export default function ProductDetailPage() {
   }, [id]);
 
   const activeColor = isCustom ? (customHex.startsWith("#") ? customHex : `#${customHex}`) : selectedColor;
+  // Merge product-specific colors with defaults; product colors take priority
+  const productColors = (product?.colors && product.colors.length > 0)
+    ? product.colors
+    : DEFAULT_PRESET_COLORS;
+
   const activeColorLabel = isCustom
     ? `Custom (${activeColor})`
-    : PRESET_COLORS.find((c) => c.hex === selectedColor)?.label ?? selectedColor;
+    : productColors.find((c) => c.hex === selectedColor)?.label ?? selectedColor;
   
   const unitPrice = (product?.price ?? 0) + (paperType === "premium" ? 20 : 0);
   const totalPrice = unitPrice * qty;
@@ -319,7 +336,7 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-4">
             {/* Primary image */}
             <div className={`relative aspect-square rounded-3xl overflow-hidden ${CATEGORY_BG[product.categorySlug]} flex items-center justify-center`}
-              style={isCustom || selectedColor !== PRESET_COLORS[0].hex
+              style={isCustom || selectedColor !== DEFAULT_PRESET_COLORS[0].hex
                 ? { boxShadow: `inset 0 0 0 4px ${activeColor}20` }
                 : {}
               }
@@ -439,11 +456,17 @@ export default function ProductDetailPage() {
 
               {/* Preset swatches */}
               <div className="flex flex-wrap gap-2.5 mb-4">
-                {PRESET_COLORS.map((c) => (
+                {productColors.map((c) => (
                   <button
                     key={c.hex}
                     title={c.label}
-                    onClick={() => { setSelectedColor(c.hex); setIsCustom(false); }}
+                    onClick={() => {
+                      setSelectedColor(c.hex);
+                      setIsCustom(false);
+                      // Switch main image if this color has its own image
+                      if (c.image) setActiveImage(c.image);
+                      else if (product) setActiveImage(product.image);
+                    }}
                     className={`w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none ${
                       !isCustom && selectedColor === c.hex
                         ? "border-brand-dark-brown scale-110 shadow-lg"

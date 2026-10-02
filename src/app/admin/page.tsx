@@ -10,6 +10,12 @@ import { DEFAULT_CATEGORIES, CollectionItem } from "@/components/Categories";
 
 type OrderStatus = "pending" | "processing" | "shipped" | "delivered";
 
+interface ColorVariant {
+  label: string;
+  hex: string;
+  image: string;
+}
+
 interface Product {
   id: string;
   category: string;
@@ -18,6 +24,7 @@ interface Product {
   price: number;
   image: string;
   images: string[];
+  colors: ColorVariant[];
   size: string;
   badge?: string;
   created_at: string;
@@ -91,9 +98,14 @@ export default function AdminDashboard() {
     price: "",
     image: "/images/placeholder.webp",
     images: [] as string[],
+    colors: [] as ColorVariant[],
     size: "2.5x3x1.5",
     badge: ""
   });
+
+  // Color variant state for add/edit modals
+  const [newColorVariant, setNewColorVariant] = useState<ColorVariant>({ label: "", hex: "#1C1C1E", image: "" });
+  const [uploadingColorImage, setUploadingColorImage] = useState(false);
 
   const [newImageUrl, setNewImageUrl] = useState("");
 
@@ -313,6 +325,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleColorImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEdit: boolean) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingColorImage(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `color-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const { error } = await supabase.storage.from('product-images').upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
+      setNewColorVariant(prev => ({ ...prev, image: publicUrl }));
+    } catch (err) {
+      console.error('Color image upload error:', err);
+      alert('Failed to upload image.');
+    } finally {
+      setUploadingColorImage(false);
+    }
+  };
+
+  const addColorVariant = (isEdit: boolean) => {
+    if (!newColorVariant.label || !newColorVariant.hex) return;
+    if (isEdit && editingProduct) {
+      setEditingProduct({ ...editingProduct, colors: [...(editingProduct.colors || []), { ...newColorVariant }] });
+    } else {
+      setNewProduct({ ...newProduct, colors: [...newProduct.colors, { ...newColorVariant }] });
+    }
+    setNewColorVariant({ label: "", hex: "#1C1C1E", image: "" });
+  };
+
+  const removeColorVariant = (idx: number, isEdit: boolean) => {
+    if (isEdit && editingProduct) {
+      setEditingProduct({ ...editingProduct, colors: editingProduct.colors.filter((_, i) => i !== idx) });
+    } else {
+      setNewProduct({ ...newProduct, colors: newProduct.colors.filter((_, i) => i !== idx) });
+    }
+  };
+
   const addProduct = async () => {
     if (!newProduct.id || !newProduct.description || !newProduct.price) return;
     setUpdating("new");
@@ -331,6 +380,7 @@ export default function AdminDashboard() {
         price: "",
         image: "/images/placeholder.webp",
         images: [],
+        colors: [],
         size: "2.5x3x1.5",
         badge: ""
       });
@@ -350,6 +400,7 @@ export default function AdminDashboard() {
         price: editingProduct.price,
         image: editingProduct.image,
         images: editingProduct.images,
+        colors: editingProduct.colors || [],
         size: editingProduct.size,
         badge: editingProduct.badge
       })
@@ -1100,7 +1151,68 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                
+                 {/* Color Variants Section - Add Modal */}
+                 <div className="sm:col-span-2 pt-2">
+                   <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-3 ml-1">Color Variants (Optional)</label>
+                   {newProduct.colors.length > 0 && (
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                       {newProduct.colors.map((cv, idx) => (
+                         <div key={idx} className="relative flex items-center gap-2 bg-[#f5f0eb] border border-[#e1d5c9] rounded-xl p-3 group">
+                           <div className="w-7 h-7 rounded-full border-2 border-white shadow flex-shrink-0" style={{ backgroundColor: cv.hex }} />
+                           <div className="flex-1 min-w-0">
+                             <p className="text-[10px] font-normal uppercase tracking-widest text-brand-charcoal truncate">{cv.label}</p>
+                             {cv.image && <p className="text-[9px] text-brand-brown">Image ✓</p>}
+                           </div>
+                           <button onClick={() => removeColorVariant(idx, false)} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow">
+                             <X size={10} />
+                           </button>
+                         </div>
+                       ))}
+                     </div>
+                   )}
+                   <div className="bg-[#f5f0eb] border border-[#e1d5c9] rounded-2xl p-4 space-y-3">
+                     <p className="text-[9px] uppercase tracking-widest text-brand-brown font-normal">Add Color Variant</p>
+                     <div className="grid grid-cols-2 gap-3">
+                       <input
+                         type="text"
+                         placeholder="Color name (e.g. Midnight Black)"
+                         value={newColorVariant.label}
+                         onChange={(e) => setNewColorVariant(prev => ({ ...prev, label: e.target.value }))}
+                         className="col-span-2 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown rounded-xl px-3 py-2.5 text-sm text-brand-charcoal outline-none transition-all"
+                       />
+                       <div className="flex items-center gap-2 bg-brand-cream border border-[#e1d5c9] rounded-xl px-3 py-2.5">
+                         <input
+                           type="color"
+                           value={newColorVariant.hex}
+                           onChange={(e) => setNewColorVariant(prev => ({ ...prev, hex: e.target.value }))}
+                           className="w-6 h-6 rounded-full border-0 cursor-pointer bg-transparent"
+                         />
+                         <span className="text-xs text-brand-charcoal font-mono">{newColorVariant.hex}</span>
+                       </div>
+                       <label className={`flex items-center justify-center gap-1.5 border border-[#e1d5c9] rounded-xl px-3 py-2.5 cursor-pointer transition-all ${uploadingColorImage ? 'bg-brand-cream/50 opacity-50' : 'bg-brand-cream hover:border-brand-brown'}`}>
+                         {uploadingColorImage ? <div className="w-4 h-4 border-2 border-brand-brown/40 border-t-brand-brown rounded-full animate-spin" /> : <Upload size={14} className="text-brand-brown" />}
+                         <span className="text-[10px] uppercase tracking-widest text-brand-brown">{newColorVariant.image ? 'Change' : 'Image'}</span>
+                         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleColorImageUpload(e, false)} disabled={uploadingColorImage} />
+                       </label>
+                     </div>
+                     {newColorVariant.image && (
+                       <div className="flex items-center gap-2">
+                         <img src={newColorVariant.image} alt="color preview" className="w-10 h-10 rounded-lg object-cover border border-[#e1d5c9]" />
+                         <span className="text-[10px] text-brand-brown">Image preview ✓</span>
+                       </div>
+                     )}
+                     <button
+                       onClick={() => addColorVariant(false)}
+                       disabled={!newColorVariant.label || !newColorVariant.hex}
+                       className="w-full py-2.5 bg-brand-charcoal text-brand-cream rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#3a352f] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                     >
+                       <Plus size={14} /> Add This Color
+                     </button>
+                   </div>
+                 </div>
+
+<div className="sm:col-span-2">
                   <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Badge / Tag (Optional)</label>
                   <input 
                     type="text" placeholder="e.g. Best Seller, New Arrival" 
@@ -1267,7 +1379,68 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                
+                 {/* Color Variants Section - Edit Modal */}
+                 <div className="sm:col-span-2 pt-2">
+                   <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-3 ml-1">Color Variants (Optional)</label>
+                   {(editingProduct.colors || []).length > 0 && (
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                       {(editingProduct.colors || []).map((cv, idx) => (
+                         <div key={idx} className="relative flex items-center gap-2 bg-[#f5f0eb] border border-[#e1d5c9] rounded-xl p-3 group">
+                           <div className="w-7 h-7 rounded-full border-2 border-white shadow flex-shrink-0" style={{ backgroundColor: cv.hex }} />
+                           <div className="flex-1 min-w-0">
+                             <p className="text-[10px] font-normal uppercase tracking-widest text-brand-charcoal truncate">{cv.label}</p>
+                             {cv.image && <p className="text-[9px] text-brand-brown">Image ✓</p>}
+                           </div>
+                           <button onClick={() => removeColorVariant(idx, true)} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow">
+                             <X size={10} />
+                           </button>
+                         </div>
+                       ))}
+                     </div>
+                   )}
+                   <div className="bg-[#f5f0eb] border border-[#e1d5c9] rounded-2xl p-4 space-y-3">
+                     <p className="text-[9px] uppercase tracking-widest text-brand-brown font-normal">Add Color Variant</p>
+                     <div className="grid grid-cols-2 gap-3">
+                       <input
+                         type="text"
+                         placeholder="Color name (e.g. Midnight Black)"
+                         value={newColorVariant.label}
+                         onChange={(e) => setNewColorVariant(prev => ({ ...prev, label: e.target.value }))}
+                         className="col-span-2 bg-brand-cream border border-[#e1d5c9] focus:border-brand-brown rounded-xl px-3 py-2.5 text-sm text-brand-charcoal outline-none transition-all"
+                       />
+                       <div className="flex items-center gap-2 bg-brand-cream border border-[#e1d5c9] rounded-xl px-3 py-2.5">
+                         <input
+                           type="color"
+                           value={newColorVariant.hex}
+                           onChange={(e) => setNewColorVariant(prev => ({ ...prev, hex: e.target.value }))}
+                           className="w-6 h-6 rounded-full border-0 cursor-pointer bg-transparent"
+                         />
+                         <span className="text-xs text-brand-charcoal font-mono">{newColorVariant.hex}</span>
+                       </div>
+                       <label className={`flex items-center justify-center gap-1.5 border border-[#e1d5c9] rounded-xl px-3 py-2.5 cursor-pointer transition-all ${uploadingColorImage ? 'bg-brand-cream/50 opacity-50' : 'bg-brand-cream hover:border-brand-brown'}`}>
+                         {uploadingColorImage ? <div className="w-4 h-4 border-2 border-brand-brown/40 border-t-brand-brown rounded-full animate-spin" /> : <Upload size={14} className="text-brand-brown" />}
+                         <span className="text-[10px] uppercase tracking-widest text-brand-brown">{newColorVariant.image ? 'Change' : 'Image'}</span>
+                         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleColorImageUpload(e, true)} disabled={uploadingColorImage} />
+                       </label>
+                     </div>
+                     {newColorVariant.image && (
+                       <div className="flex items-center gap-2">
+                         <img src={newColorVariant.image} alt="color preview" className="w-10 h-10 rounded-lg object-cover border border-[#e1d5c9]" />
+                         <span className="text-[10px] text-brand-brown">Image preview ✓</span>
+                       </div>
+                     )}
+                     <button
+                       onClick={() => addColorVariant(true)}
+                       disabled={!newColorVariant.label || !newColorVariant.hex}
+                       className="w-full py-2.5 bg-brand-charcoal text-brand-cream rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#3a352f] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                     >
+                       <Plus size={14} /> Add This Color
+                     </button>
+                   </div>
+                 </div>
+
+<div className="sm:col-span-2">
                   <label className="block text-[10px] font-normal uppercase tracking-widest text-brand-brown mb-2 ml-1">Badge / Tag (Optional)</label>
                   <input 
                     type="text" placeholder="e.g. Best Seller, New Arrival" 
